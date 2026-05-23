@@ -13,5 +13,9 @@ __pycache__/
 #
 .env
 docs/
+<<<<<<< HEAD
 credentials/
 tests/
+=======
+credentials/
+>>>>>>> dbccf69 (!23)
