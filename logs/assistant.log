@@ -126,3 +126,130 @@
 2026-05-23 11:46:15,065 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-23 11:46:22,399 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-23 11:46:22,708 [INFO] app | TEST | tasks | step=1 | response='[Click here to authorize Google Tasks access](https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=1013802264737-21fn0ei3utvket53d5kosf9mtetugl58.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8001%2Foauth2callback&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ftasks.readonly+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ftasks+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&state=8b462b16be7fb446b1bc8e3f5b6e9185&code_challenge=Tuj3RJRPLgC2SfHPsU1LQA0kyM1x2HW_Ga_F9h6nbpg&code_challenge_method=S256&access_type=offline&prompt=consent)\n\nPlease click the link above, complete the authorization in your browser, and then retry your original command.'
+2026-05-23 19:15:24,793 [INFO] app | TEST | tasks | step=1 | create
+2026-05-23 19:15:38,357 [INFO] app | TEST | tasks | step=1 | create
+2026-05-23 19:15:54,723 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 19:16:07,404 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 19:16:26,918 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 19:17:43,847 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 19:18:16,032 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 19:18:20,216 [ERROR] asyncio | unhandled exception during asyncio.run() shutdown
+task: <Task finished name='pydantic_graph.graph_builder._GraphIterator._run_tracked_task' coro=<_GraphIterator._run_tracked_task() done, defined at C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py:840> exception=ClosedResourceError()>
+Traceback (most recent call last):
+  File "C:\Development\python\pydantic-ai\closed-claw\start.py", line 49, in run
+    result = await agent.run(
+             ^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\abstract.py", line 384, in run
+    async with self.iter(
+               ~~~~~~~~~^
+        user_prompt=user_prompt,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        spec=spec,
+        ^^^^^^^^^^
+    ) as agent_run:
+    ^
+  File "C:\Python313\Lib\contextlib.py", line 235, in __aexit__
+    await self.gen.athrow(value)
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\__init__.py", line 1496, in iter
+    async with AsyncExitStack() as stack:
+               ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 768, in __aexit__
+    raise exc
+  File "C:\Python313\Lib\contextlib.py", line 751, in __aexit__
+    cb_suppress = await cb(*exc_details)
+                  ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 235, in __aexit__
+    await self.gen.athrow(value)
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 327, in iter
+    async with GraphRun[StateT, DepsT, OutputT](
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        graph=self,
+        ^^^^^^^^^^^
+    ...<3 lines>...
+        traceparent=traceparent,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as graph_run:
+    ^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 478, in __aexit__
+    await self._async_exit_stack.__aexit__(exc_type, exc_val, exc_tb)
+  File "C:\Python313\Lib\contextlib.py", line 768, in __aexit__
+    raise exc
+  File "C:\Python313\Lib\contextlib.py", line 749, in __aexit__
+    cb_suppress = cb(*exc_details)
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 1085, in _unwrap_exception_groups
+    raise exception
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 850, in _run_tracked_task
+    await self.iter_stream_sender.send(_GraphTaskResult(t_, [], error=exc))
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\anyio\streams\memory.py", line 249, in send
+    self.send_nowait(item)
+    ~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\anyio\streams\memory.py", line 218, in send_nowait
+    raise ClosedResourceError
+anyio.ClosedResourceError
+2026-05-23 19:18:20,226 [ERROR] asyncio | unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-1' coro=<run() done, defined at C:\Development\python\pydantic-ai\closed-claw\start.py:37> exception=ClosedResourceError()>
+Traceback (most recent call last):
+  File "C:\Development\python\pydantic-ai\closed-claw\start.py", line 49, in run
+    result = await agent.run(
+             ^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\abstract.py", line 384, in run
+    async with self.iter(
+               ~~~~~~~~~^
+        user_prompt=user_prompt,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+        spec=spec,
+        ^^^^^^^^^^
+    ) as agent_run:
+    ^
+  File "C:\Python313\Lib\contextlib.py", line 235, in __aexit__
+    await self.gen.athrow(value)
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\__init__.py", line 1496, in iter
+    async with AsyncExitStack() as stack:
+               ~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 768, in __aexit__
+    raise exc
+  File "C:\Python313\Lib\contextlib.py", line 751, in __aexit__
+    cb_suppress = await cb(*exc_details)
+                  ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 235, in __aexit__
+    await self.gen.athrow(value)
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 327, in iter
+    async with GraphRun[StateT, DepsT, OutputT](
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        graph=self,
+        ^^^^^^^^^^^
+    ...<3 lines>...
+        traceparent=traceparent,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as graph_run:
+    ^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 478, in __aexit__
+    await self._async_exit_stack.__aexit__(exc_type, exc_val, exc_tb)
+  File "C:\Python313\Lib\contextlib.py", line 768, in __aexit__
+    raise exc
+  File "C:\Python313\Lib\contextlib.py", line 749, in __aexit__
+    cb_suppress = cb(*exc_details)
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 1085, in _unwrap_exception_groups
+    raise exception
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py", line 850, in _run_tracked_task
+    await self.iter_stream_sender.send(_GraphTaskResult(t_, [], error=exc))
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\anyio\streams\memory.py", line 249, in send
+    self.send_nowait(item)
+    ~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Development\python\pydantic-ai\closed-claw\venv\Lib\site-packages\anyio\streams\memory.py", line 218, in send_nowait
+    raise ClosedResourceError
+anyio.ClosedResourceError

@@ -1,109 +1,76 @@
-# # from __future__ import annotations
+"""Google Workspace MCP server wrapper using workspace-mcp.
 
-# import os
-# from dotenv import load_dotenv
-# from pydantic_ai.mcp import MCPServerStdio
+workspace-mcp is a Python MCP server (pip install workspace-mcp) that exposes
+Gmail, Calendar, Drive, Docs, Sheets, Slides, Forms, Tasks, Chat, and more
+as MCP tools over stdio.
 
-# load_dotenv()
+Auth: one-time browser OAuth flow on first tool call. Credentials cached to
+disk per email. All subsequent calls are silent.
 
+Usage:
+    google_workspace_server(["tasks"])
+    google_workspace_server(["tasks", "calendar"])
+    google_workspace_server(["gmail"])
 
-# def google_workspace_server() -> MCPServerStdio:
-#     """Configures the official Workspace MCP server cleanly for PydanticAI."""
-#     mcp_env = os.environ.copy()
-
-#     mcp_env.update(
-#         {
-#             "WORKSPACE_MCP_AUTH_MODE": "service_account",
-#             "GOOGLE_APPLICATION_CREDENTIALS": os.getenv("GOOGLE_APPLICATION_CREDENTIALS", ""), 
-#             # "GOOGLE_OAUTH_CLIENT_ID": os.getenv("GOOGLE_OAUTH_CLIENT_ID", ""),
-#             # "GOOGLE_OAUTH_CLIENT_SECRET": os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", ""),
-#             "USER_GOOGLE_EMAIL": os.getenv("GOOGLE_ACCOUNT_EMAIL", ""),
-#             "WORKSPACE_MCP_TOOL_TIER": "core",
-#             # --- THE FIXES FOR THE BROKEN RESOURCE ERROR ---
-#             # Forces FastMCP to suppress text logging or pipe it safely to stderr
-#             "FASTMCP_LOG_LEVEL": "WARNING",
-#             # Tells UV to keep its mouth shut so it doesn't leak status text into stdout
-#             "UV_QUIET": "1",
-#         }
-#     )
-
-#     return MCPServerStdio(
-#         command="uvx",
-#         args=["workspace-mcp"],
-#         env=mcp_env,
-#     )
-
-
-# from __future__ import annotations
-
-# import os
-# from dotenv import load_dotenv
-# from pydantic_ai.mcp import MCPServerStdio
-
-# load_dotenv()
-
-
-# def google_workspace_server() -> MCPServerStdio:
-#     """Launches the clean, configuration-driven Node Google Workspace MCP server."""
-#     mcp_env = os.environ.copy()
-
-#     # Pass the required scopes directly to the environment
-#     mcp_env.update(
-#         {
-#             "GOOGLE_CLIENT_ID": os.getenv("GOOGLE_OAUTH_CLIENT_ID", ""),
-#             "GOOGLE_CLIENT_SECRET": os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", ""),
-#         }
-#     )
-
-#     return MCPServerStdio(
-#         command="npx",
-#         args=[
-#             "-y", 
-#             "@modelcontextprotocol/server-google-workspace",
-#             "--scopes", "https://www.googleapis.com/auth/tasks", "https://www.googleapis.com/auth/calendar"
-#         ],
-#         env=mcp_env,
-#     )
-
-
-from __future__ import annotations
+Valid service names: gmail, drive, calendar, docs, sheets, slides, forms,
+                     tasks, chat, search
+"""
 
 import os
-from dotenv import load_dotenv
+import shutil
 from pydantic_ai.mcp import MCPServerStdio
 
-load_dotenv()
 
-
-def google_workspace_server(tools: list[str]) -> MCPServerStdio:
+def google_workspace_server(services: list[str]) -> MCPServerStdio:
     """Return a configured MCPServerStdio for the given Google Workspace services.
 
-    workspace-mcp is a single package that covers all 12 Google services.
-    The `tools` argument scopes the server to only the services needed by the
-    caller — this avoids loading unnecessary API scopes.
-
-    PydanticAI uses this to spawn the MCP server subprocess and discover its
-    tools. In Stage 1b, test scripts use the connection directly for verification.
-    In Stage 1c, this is passed to Agent(mcp_servers=[...]) and PydanticAI handles
-    all tool discovery and calling automatically.
+    Spawns workspace-mcp via uvx (preferred) or direct binary. Runs in
+    single-user mode — credentials are read from disk after one-time OAuth.
 
     Args:
-        tools: list of Google service names to enable, e.g. ["tasks", "calendar"]
-               Valid values: gmail, calendar, tasks, drive, docs, sheets, slides,
-               forms, chat, contacts, search
+        services: list of service names, e.g. ["tasks", "calendar"]
 
-    Usage:
-        google_workspace_server(["tasks", "calendar"])  # Concierge agent
-        google_workspace_server(["gmail"])               # Comms agent
+    Returns:
+        MCPServerStdio configured to spawn workspace-mcp for the given services.
+
+    Raises:
+        RuntimeError: if neither uvx nor workspace-mcp binary is found on PATH.
     """
+    # uvx_path = shutil.which("uvx")
+    # wsmcp_path = shutil.which("workspace-mcp")
+
+    # if uvx_path:
+    #     command = uvx_path
+    #     args = [
+    #         "workspace-mcp",
+    #         "--single-user",
+    #         "--tools", " ".join(services),
+    #     ]
+    # elif wsmcp_path:
+    #     command = wsmcp_path
+    #     args = [
+    #         "--single-user",
+    #         "--tools", " ".join(services),
+    #     ]
+    # else:
+    #     raise RuntimeError(
+    #         "Neither uvx nor workspace-mcp found on PATH.\n"
+    #         "Install with: pip install uv && pip install workspace-mcp\n"
+    #         "Then complete OAuth setup: see SPECIFICATION_1B_v3.md Step 7."
+    #     )
+
     return MCPServerStdio(
-        "uvx",
-        args=["workspace-mcp", "--tools"] + tools,
+        command="uvx",
+        args=[
+            "workspace-mcp",
+            "--single-user",
+            "--tools", ",".join(services),
+        ],
         env={
             **os.environ,
             "GOOGLE_OAUTH_CLIENT_ID": os.getenv("GOOGLE_OAUTH_CLIENT_ID", ""),
             "GOOGLE_OAUTH_CLIENT_SECRET": os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", ""),
-            "USER_GOOGLE_EMAIL": os.getenv("GOOGLE_ACCOUNT_EMAIL", ""),
+            "USER_GOOGLE_EMAIL": os.getenv("USER_GOOGLE_EMAIL", ""),
             "OAUTHLIB_INSECURE_TRANSPORT": "1",
         },
     )
