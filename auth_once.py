@@ -1,5 +1,9 @@
 from google_auth_oauthlib.flow import InstalledAppFlow
+
 import json, os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 SCOPES = [
     "https://www.googleapis.com/auth/tasks",
