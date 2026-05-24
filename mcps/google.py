@@ -21,8 +21,9 @@ import shutil
 from pydantic_ai.mcp import MCPServerStdio
 
 
-def google_workspace_server(services: list[str]) -> MCPServerStdio:
-    """Return a configured MCPServerStdio for the given Google Workspace services.
+def google_workspace_server(services: list[str], user_email: str | None = None, timeout: int = 30) -> MCPServerStdio:
+    """
+    Return a configured MCPServerStdio for the given Google Workspace services.
 
     Spawns workspace-mcp via uvx (preferred) or direct binary. Runs in
     single-user mode — credentials are read from disk after one-time OAuth.
@@ -36,29 +37,15 @@ def google_workspace_server(services: list[str]) -> MCPServerStdio:
     Raises:
         RuntimeError: if neither uvx nor workspace-mcp binary is found on PATH.
     """
-    # uvx_path = shutil.which("uvx")
-    # wsmcp_path = shutil.which("workspace-mcp")
+    # 1. Prepare the environment dictionary explicitly
+    # Start with the FULL current environment, then override/add your keys
+    env = {**os.environ}
+    env["GOOGLE_OAUTH_CLIENT_ID"] = os.getenv("GOOGLE_OAUTH_CLIENT_ID", "")
+    env["GOOGLE_OAUTH_CLIENT_SECRET"] = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", "")
+    env["USER_GOOGLE_EMAIL"] = user_email or os.getenv("USER_GOOGLE_EMAIL", "")
+    env["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-    # if uvx_path:
-    #     command = uvx_path
-    #     args = [
-    #         "workspace-mcp",
-    #         "--single-user",
-    #         "--tools", " ".join(services),
-    #     ]
-    # elif wsmcp_path:
-    #     command = wsmcp_path
-    #     args = [
-    #         "--single-user",
-    #         "--tools", " ".join(services),
-    #     ]
-    # else:
-    #     raise RuntimeError(
-    #         "Neither uvx nor workspace-mcp found on PATH.\n"
-    #         "Install with: pip install uv && pip install workspace-mcp\n"
-    #         "Then complete OAuth setup: see SPECIFICATION_1B_v3.md Step 7."
-    #     )
-
+    # 2. Return the server with the prepared dictionary
     return MCPServerStdio(
         command="uvx",
         args=[
@@ -66,11 +53,6 @@ def google_workspace_server(services: list[str]) -> MCPServerStdio:
             "--single-user",
             "--tools", ",".join(services),
         ],
-        env={
-            **os.environ,
-            "GOOGLE_OAUTH_CLIENT_ID": os.getenv("GOOGLE_OAUTH_CLIENT_ID", ""),
-            "GOOGLE_OAUTH_CLIENT_SECRET": os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", ""),
-            "USER_GOOGLE_EMAIL": os.getenv("USER_GOOGLE_EMAIL", ""),
-            "OAUTHLIB_INSECURE_TRANSPORT": "1",
-        },
+        env=env,
+        timeout=timeout
     )
