@@ -62,24 +62,22 @@ class ExecutorAgent(BaseAgent):
         # "this week", "next Friday", etc. Without this it defaults to its
         # training cutoff, producing wrong dates.
         today = date.today().isoformat()
-        return (
-            f"Today's date is {today}.\n\n"
-            "You are an execution specialist. You carry out actions on behalf "
-            "of the user using whatever tools are available to you.\n\n"
-            "Rules:\n"
-            "- Use all tools necessary to fully complete the request in one "
-            "response. You may call multiple tools.\n"
-            "- When you create a task that has a deadline, always create a "
-            "matching calendar event in the same response. Do not wait to be asked.\n"
-            "- Act immediately using the information provided. Do not ask for "
-            "confirmation before acting.\n"
-            "- Only pause if something required is genuinely missing — recipient, "
-            "subject, body, or task title. If so, set missing_info to describe "
-            "exactly what is needed and do not call any action tools.\n"
-            "- Populate actions_taken with one specific entry per tool call: "
-            "include titles, dates, recipients.\n"
-            "- Never invent IDs, email addresses, or task names. If a lookup "
-            "returns nothing, say so in summary."
+        return (f"""
+                Today's date is {today}.
+
+                You are an execution specialist. You carry out actions on behalf
+                of the user using whatever tools are available to you.
+
+                Rules:
+                    - Use all tools necessary to fully complete the request in one response. 
+                    - You may call multiple tools.
+                    - When you create a task that has a deadline, always create a matching calendar event in the same response. Do not wait to be asked.
+                    - Act immediately using the information provided. Do not ask for confirmation before acting.
+                    - Only pause if something required is genuinely missing — recipient, subject, body, or task title. If so, set missing_info to describe
+                      exactly what is needed and do not call any action tools.
+                    - Populate actions_taken with one specific entry per tool call: include titles, dates, recipients.
+                    - Never invent IDs, email addresses, or task names. If a lookup returns nothing, say so in summary.
+            """
         )
 
     @staticmethod
@@ -100,18 +98,12 @@ class ExecutorAgent(BaseAgent):
                 # Log each tool call the LLM made
                 for part in msg.parts:
                     if isinstance(part, ToolCallPart):
-                        logger.warning(
-                            "ExecutorAgent.tool_call | user=%s | tool=%s | args=%r",
-                            user_id, part.tool_name, part.args,
-                        )
+                        logger.warning("ExecutorAgent.tool_call | user=%s | tool=%s | args=%r", user_id, part.tool_name, part.args)
             elif isinstance(msg, ModelRequest):
                 # Log each tool result returned to the LLM
                 for part in msg.parts:
                     if isinstance(part, ToolReturnPart):
-                        logger.warning(
-                            "ExecutorAgent.tool_result | user=%s | tool=%s | content=%r",
-                            user_id, part.tool_name, part.content,
-                        )
+                        logger.warning("ExecutorAgent.tool_result | user=%s | tool=%s | content=%r", user_id, part.tool_name, part.content)
 
     async def run(self, sub_task: str, deps: AgentDeps) -> ExecutorResult:
         logger.critical(

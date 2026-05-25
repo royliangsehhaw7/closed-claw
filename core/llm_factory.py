@@ -26,7 +26,6 @@ class LLMFactory:
         return self._get_openrouter_model(name)
 
     # -- private
-
     def _get_google_model(self, name: str) -> GoogleModel:
         return GoogleModel(
             model_name=name,

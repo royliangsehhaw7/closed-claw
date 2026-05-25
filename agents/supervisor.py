@@ -41,10 +41,9 @@ class SupervisorAgent(BaseAgent):
         )
 
         @agent.tool
-        async def delegate_to_executor(
-            ctx: RunContext[AgentDeps], sub_task: str
-        ) -> ExecutorResult:
-            """Delegate any request that requires taking an action to the Executor.
+        async def delegate_to_executor(ctx: RunContext[AgentDeps], sub_task: str) -> ExecutorResult:
+            """
+            Delegate any request that requires taking an action to the Executor.
 
             Use this tool whenever the user wants something done. Do not use
             for general conversation or questions answerable directly.
@@ -73,28 +72,27 @@ class SupervisorAgent(BaseAgent):
         self._history: list = []
 
     def _build_system_prompt(self) -> str:
-        return (
-            "You are a personal assistant. You have one specialist tool: "
-            "delegate_to_executor.\n\n"
-            "When to delegate:\n"
-            "- The user wants something done — any action involving their data, "
-            "services, or accounts → delegate_to_executor.\n"
-            "- Pass the full request as-is. Do not decide what kind of action "
-            "it is or which service it involves. The Executor handles that.\n\n"
-            "When NOT to delegate:\n"
-            "- General conversation, greetings, or questions you can answer "
-            "directly → respond without calling any tool.\n\n"
-            "After the Executor returns:\n"
-            "- Use result.summary to compose a natural, conversational message.\n"
-            "- If result.missing_info is set, relay that question to the user "
-            "and set requires_followup=True.\n"
-            "- If all actions completed, set requires_followup=False.\n"
-            "- Do not repeat the summary verbatim. Rewrite for tone."
+        return (f"""
+            You are a personal assistant. You have one specialist tool: delegate_to_executor.
+
+            When to delegate:
+                - The user wants something done — any action involving their data, services, or accounts → delegate_to_executor.
+                - Pass the full request as-is. Do not decide what kind of action it is or which service it involves. The Executor handles that.
+            When NOT to delegate:
+                - General conversation, greetings, or questions you can answer directly → respond without calling any tool.
+
+            After the Executor returns:
+                - Use result.summary to compose a natural, conversational message.
+                - If result.missing_info is set, relay that question to the user and set requires_followup=True."
+                - If all actions completed, set requires_followup=False.
+                - Do not repeat the summary verbatim. Rewrite for tone.
+        """
         )
 
     @staticmethod
     def _log_messages(user_id: str, messages: list[Any]) -> None:
-        """Log supervisor-level tool calls (i.e. delegate_to_executor calls).
+        """
+        Log supervisor-level tool calls (i.e. delegate_to_executor calls).
 
         Same pattern as ExecutorAgent._log_messages. Logs only what the
         Supervisor's LLM called — not the Executor's internal tool calls,
@@ -104,10 +102,8 @@ class SupervisorAgent(BaseAgent):
             if isinstance(msg, ModelResponse):
                 for part in msg.parts:
                     if isinstance(part, ToolCallPart):
-                        logger.warning(
-                            "### SupervisorAgent.tool_call | user=%s | tool=%s",
-                            user_id, part.tool_name,
-                        )
+                        logger.warning("SupervisorAgent.tool_call | user=%s | tool=%s", user_id, part.tool_name)
+
 
     async def run(self, user_input: str, deps: AgentDeps) -> SupervisorResponse:
         logger.critical(
