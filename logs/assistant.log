@@ -284,3 +284,20 @@ anyio.ClosedResourceError
 2026-05-24 20:43:06,917 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-24 20:43:17,788 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-24 20:43:51,654 [INFO] app | TEST | tasks | step=1 | response='[Click here to authorize Google Tasks access](https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=1013802264737-21fn0ei3utvket53d5kosf9mtetugl58.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2callback&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ftasks.readonly+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ftasks+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&state=4e18e187edc042da6d1fb1b292affe81&code_challenge=0GPYvpg4URbx_g0FgVMfeJXvtsksBTAVxkQEY3mgiS8&code_challenge_method=S256&access_type=offline&prompt=consent)\n\nPlease click the link above to authorize Google Tasks access, then retry your original command after successful authorization.'
+2026-05-25 07:54:58,514 [INFO] app | TEST | tasks | step=1 | create
+2026-05-25 07:55:01,399 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:55:12,225 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:55:28,207 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:55:43,532 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:56:21,971 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:56:21,981 [INFO] app | TEST | tasks | step=1 | response='I checked your Development task list and found no tasks to move.'
+2026-05-25 07:57:50,613 [INFO] app | TEST | calendar | step=1 | create
+2026-05-25 07:57:59,486 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:58:03,849 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:59:07,658 [INFO] app | TEST | calendar | step=1 | create
+2026-05-25 07:59:14,390 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 07:59:22,752 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 08:00:13,641 [INFO] app | TEST | gmail | step=1 | send
+2026-05-25 08:00:25,064 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 08:00:41,962 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 08:00:41,972 [INFO] app | TEST | gmail | step=1 | response="I sent an email to liangsehhaw@outlook.my with subject '[1b test] MCP Gmail verification' and body 'This email was sent by test_mcp_gmail.py — safe to delete.' (Message ID: 19e5c6ee99664e3e)."

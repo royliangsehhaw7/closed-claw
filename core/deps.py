@@ -7,6 +7,7 @@ from typing import Any
 @dataclass
 class AgentDeps:
     user_id: str
+    user_email: str
     session_history: list[dict[str, str]] = field(default_factory=list)
 
     # Wired in Stage 3
