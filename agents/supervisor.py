@@ -1,38 +1,41 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from pydantic_ai import Agent, RunContext
-from pydantic_ai.messages import ModelResponse, ModelRequest, ToolCallPart, ToolReturnPart
+from pydantic_ai.messages import ModelResponse, ToolCallPart
 
 from agents.base import BaseAgent
-from agents.executor import ExecutorAgent
 from core.deps import AgentDeps
 from core.llm_factory import LLMFactory
 from core.logger import logger
-from schemas.executor_result import ExecutorResult
+from core.registry import AGENT_REGISTRY, build_registry_prompt, build_specialist
+from schemas.specialist_result import SpecialistResult
 from schemas.supervisor_response import SupervisorResponse
 
 _factory = LLMFactory()
 
 
 class SupervisorAgent(BaseAgent):
-    """Entry point for all user requests.
+    """
+    Entry point for all user requests.
 
-    Makes one decision: does this request require tool use, or can it be
-    answered directly? If tool use is needed, delegates the full request to
-    a fresh ExecutorAgent via delegate_to_executor.
+    Makes two decisions:
+    1. Does this request require tool use, or can it be answered directly?
+    2. If tool use is needed, which specialists should handle it?
 
-    Never decides which tool, which service, or which action to take.
+    The Supervisor reads the registry at startup. Its system prompt always reflects exactly what 
+    specialists are available. Adding a new specialist to the registry is immediately visible 
+    to the Supervisor — no code changes here.
+
     Never resolves user identity — AgentDeps arrives fully populated.
+    Never calls MCP tools directly — that is the specialists' job.
     """
 
     def __init__(self) -> None:
         super().__init__(name="supervisor")
 
-        # Build the agent with NO tools= argument.
-        # delegate_to_executor is registered below via @agent.tool.
-        # log_decision has been removed — see Section 10.
         agent = Agent(
             model=_factory.get_model(),
             system_prompt=self._build_system_prompt(),
@@ -41,72 +44,97 @@ class SupervisorAgent(BaseAgent):
         )
 
         @agent.tool
-        async def delegate_to_executor(ctx: RunContext[AgentDeps], sub_task: str) -> ExecutorResult:
-            """
-            Delegate any request that requires taking an action to the Executor.
+        async def delegate_to_specialists( 
+            ctx: RunContext[AgentDeps],
+            sub_task: str,
+            specialist_keys: list[str],
+        ) -> str:
+            """Delegate a request to one or more specialist agents.
 
-            Use this tool whenever the user wants something done. Do not use
-            for general conversation or questions answerable directly.
+            Use this tool whenever the user wants something done. Do not use for general conversation or 
+            questions answerable directly.
 
-            Pass the full user request as sub_task. Do not summarise, filter,
-            or decide what kind of action is needed — the Executor determines
-            that from the tools it can see. Include every detail the user provided.
+            Select specialist_keys from the registry. For simple requests, one key is enough. 
+            For cross-service requests, pass all keys that apply — each specialist will handle its own domain.
+
+            The full sub_task string is passed to every specialist. Include every detail the user provided. 
+            Do not filter or summarise.
 
             Args:
-                sub_task: Complete description of what the user wants done.
-                          The Executor sees only this string.
+                sub_task:         Complete description of what the user wants done.
+                specialist_keys:  One or more keys from the specialist registry.
+                                  Must be non-empty. Example: ["tasks", "calendar"]
             """
             logger.info(
-                "SupervisorAgent | tool=delegate_to_executor | user=%s | sub_task=%r",
-                ctx.deps.user_id, sub_task,
+                "SupervisorAgent | tool=delegate_to_specialists | user=%s | keys=%r | sub_task=%r",
+                ctx.deps.user_id, specialist_keys, sub_task,
             )
-            # Fresh ExecutorAgent per request — MCP server bound to user_email
-            # at construction time. All calls on this instance act on that
-            # user's Google account.
-            executor = ExecutorAgent(ctx.deps.user_email)
-            return await executor.run(sub_task, ctx.deps)
+
+            # Validate all keys before instantiating anything
+            unknown = [k for k in specialist_keys if k not in AGENT_REGISTRY]
+            if unknown:
+                logger.warning(
+                    "SupervisorAgent | unknown specialist_keys=%r | user=%s", unknown, ctx.deps.user_id
+                )
+                specialist_keys = [k for k in specialist_keys if k in AGENT_REGISTRY]
+
+            if not specialist_keys:
+                return "No valid specialist keys provided. Cannot delegate."
+
+            # Instantiate and run each specialist sequentially.
+            # Sequential keeps logs readable and avoids MCP subprocess races.
+            # Parallelism can be added in a later stage if latency demands it.
+            results: list[SpecialistResult] = []
+            for key in specialist_keys:
+                specialist = build_specialist(key, ctx.deps.user_email)
+                result = await specialist.run(sub_task, ctx.deps)
+                results.append(result)
+
+            return self._merge_results(results)
 
         self._agent = agent
-        # Conversation history persists across turns within one session.
-        # Cleared when SupervisorAgent is re-instantiated (i.e. on app restart).
         self._history: list = []
 
     def _build_system_prompt(self) -> str:
+        registry_block = build_registry_prompt()
         return (f"""
-            You are a personal assistant. You have one specialist tool: delegate_to_executor.
+            You are a personal assistant. You have one tool: delegate_to_specialists.
+        
+            {registry_block}
 
             When to delegate:
-                - The user wants something done — any action involving their data, services, or accounts → delegate_to_executor.
-                - Pass the full request as-is. Do not decide what kind of action it is or which service it involves. The Executor handles that.
+                - The user wants something done — any action involving their data,
+                  services, or accounts → delegate_to_specialists.
+                - Select specialist_keys based on the registry descriptions above.
+                - For a task with a due date, always include both 'tasks' and 'calendar' 
+                — a matching calendar event should always be created.
+                - Pass the full request as sub_task. Include every detail. Do not filter or summarise.
+                - When unsure which specialists apply, include all that could plausibly be needed.
+
             When NOT to delegate:
                 - General conversation, greetings, or questions you can answer directly → respond without calling any tool.
 
-            After the Executor returns:
-                - Use result.summary to compose a natural, conversational message.
-                - If result.missing_info is set, relay that question to the user and set requires_followup=True."
+            After specialists return:
+                - Use the merged summary to compose a natural, conversational message.
+                - If any specialist set missing_info, relay that question to the user and set requires_followup=True.
                 - If all actions completed, set requires_followup=False.
-                - Do not repeat the summary verbatim. Rewrite for tone.
-        """
+                - Do not repeat summaries verbatim. Rewrite for tone.
+            """
         )
 
     @staticmethod
     def _log_messages(user_id: str, messages: list[Any]) -> None:
-        """
-        Log supervisor-level tool calls (i.e. delegate_to_executor calls).
-
-        Same pattern as ExecutorAgent._log_messages. Logs only what the
-        Supervisor's LLM called — not the Executor's internal tool calls,
-        which are logged by ExecutorAgent separately.
-        """
         for msg in messages:
             if isinstance(msg, ModelResponse):
                 for part in msg.parts:
                     if isinstance(part, ToolCallPart):
-                        logger.warning("SupervisorAgent.tool_call | user=%s | tool=%s", user_id, part.tool_name)
-
+                        logger.debug(
+                            "SupervisorAgent.tool_call | user=%s | tool=%s",
+                            user_id, part.tool_name,
+                        )
 
     async def run(self, user_input: str, deps: AgentDeps) -> SupervisorResponse:
-        logger.critical(
+        logger.warning(
             "SupervisorAgent.run | user=%s | email=%s | input=%r",
             deps.user_id, deps.user_email, user_input,
         )
@@ -116,28 +144,63 @@ class SupervisorAgent(BaseAgent):
             deps=deps,
             message_history=self._history,
         )
-        # Persist history for the next turn in this session
-        # self._history = result.all_messages()
-        self._history = result.new_messages()
+        self._history = result.all_messages()
 
-        # Log supervisor tool calls (delegate_to_executor calls)
         self._log_messages(deps.user_id, result.all_messages())
 
-        # Log token usage for the supervisor run.
-        # Note: this does NOT include tokens consumed by the Executor —
-        # those are logged separately in ExecutorAgent.run().
         usage = result.usage
-        logger.critical(
+        logger.warning(
             "SupervisorAgent.usage | user=%s | input=%s | output=%s | total=%s",
             deps.user_id,
             usage.input_tokens,
             usage.output_tokens,
             usage.total_tokens,
         )
-
         output: SupervisorResponse = result.output
-        logger.info(
+
+        logger.warning(
             "SupervisorAgent.result | user=%s | requires_followup=%r | message=%r",
             deps.user_id, output.requires_followup, output.message,
         )
         return output
+
+
+    def _merge_results(self, results: list[SpecialistResult]) -> str:
+        """Merge one or more SpecialistResults into a single string for the Supervisor LLM.
+
+        The Supervisor's LLM receives this string as the tool return value.
+        It uses the merged summary to compose the final user-facing message.
+
+        Format:
+        - Single result: return summary + actions directly.
+        - Multiple results: prefix each block with the specialist index so the
+
+        Supervisor can tell which actions came from which specialist.
+        """
+        if not results:
+            return "No specialists returned results."
+
+        if len(results) == 1:
+            r = results[0]
+            parts = [f"Summary: {r.summary}"]
+            if r.actions_taken:
+                parts.append("Actions taken:\n" + "\n".join(f"  - {a}" for a in r.actions_taken))
+            if r.missing_info:
+                parts.append(f"Missing info: {r.missing_info}")
+            return "\n".join(parts)
+
+        # Multiple specialists — label each block
+        blocks = []
+        all_missing: list[str] = []
+        for i, r in enumerate(results, start=1):
+            lines = [f"[Specialist {i}] Summary: {r.summary}"]
+            if r.actions_taken:
+                lines.append("Actions:\n" + "\n".join(f"  - {a}" for a in r.actions_taken))
+            if r.missing_info:
+                all_missing.append(r.missing_info)
+            blocks.append("\n".join(lines))
+
+        merged = "\n\n".join(blocks)
+        if all_missing:
+            merged += "\n\nMissing info (ask user): " + "; ".join(all_missing)
+        return merged

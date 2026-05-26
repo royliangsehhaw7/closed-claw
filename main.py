@@ -69,8 +69,8 @@ async def main() -> None:
         print(f"Assistant: {response.message}\n")
 
         # Token counts come from SupervisorAgent.run() which logs them via
-        # result.usage(). TurnRecord fields default to 0 here — wire them
-        # from result.usage() in Stage 3 when token budgeting matters.
+        # result.usage. TurnRecord fields default to 0 here — wire them
+        # from result.usage in Stage 3 when token budgeting matters.
         record = TurnRecord(
             turn_id=str(uuid.uuid4()),
             user_id=USER_ID,

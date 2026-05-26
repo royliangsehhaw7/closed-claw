@@ -12,6 +12,7 @@ __pycache__/
 
 #
 .env
+.dockerignore
 docs/
 credentials/
 tests/

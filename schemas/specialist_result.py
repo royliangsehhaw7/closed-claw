@@ -3,13 +3,13 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 
-class ExecutorResult(BaseModel):
+class SpecialistResult(BaseModel):
     """
-    Structured result returned by ExecutorAgent to the Supervisor.
+    Structured result returned by any specialist agent to the Supervisor.
 
     The Supervisor uses `summary` to compose the final user-facing message.
     `actions_taken` is an audit trail of every tool call made.
-    `missing_info` is non-None only when the Executor could not act because
+    `missing_info` is non-None only when the specialist could not act because
     required information was absent — in which case no action was taken.
     """
 
@@ -23,7 +23,7 @@ class ExecutorResult(BaseModel):
     actions_taken: list[str] = Field(
         description=(
             "One entry per tool call completed. Empty if nothing was done. "
-            "Examples: 'Created task: Review report (due Friday)', "
+            "Examples: 'Listed 3 tasks', 'Created task: Review report (due Friday)', "
             "'Created calendar event: Review report (Friday)', "
             "'Sent email to george@example.com: subject Meeting at 3pm'."
         )

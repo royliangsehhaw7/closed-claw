@@ -4,7 +4,8 @@ from pydantic import BaseModel, Field
 
 
 class SupervisorResponse(BaseModel):
-    """Structured response returned by SupervisorAgent to the caller.
+    """
+    Structured response returned by SupervisorAgent to the caller.
 
     Stage 1c: main.py prints message, ignores requires_followup.
     Stage 2+: Gateway sends message to Telegram; uses requires_followup
