@@ -1405,3 +1405,179 @@ anyio.ClosedResourceError
 2026-05-25 17:42:11,198 [[32mINFO[0m] [36mapp[0m | SupervisorAgent.result | user=local_user | requires_followup=False | message='You have three appointments this week: a Sales Meeting on Monday, May\u202f25 from 10\u202fam to 1\u202fpm, a Year‑end company trip planning meeting on Wednesday, May\u202f27 also from 10\u202fam to 1\u202fpm, and the Complete Django Forms task running from the evening of May\u202f31 into the early morning of June\u202f1.'
 2026-05-25 17:46:52,681 [INFO] app | ********** Assistant stopped by user **********
 2026-05-25 17:46:52,681 [[32mINFO[0m] [36mapp[0m | ********** Assistant stopped by user **********
+2026-05-26 07:58:41,742 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 07:58:41,742 [[32mINFO[0m] [36mapp[0m | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 07:58:41,744 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 07:58:41,744 [[32mINFO[0m] [36mapp[0m | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 07:58:41,745 [INFO] app | --------------------------------------------------
+2026-05-26 07:58:41,745 [[32mINFO[0m] [36mapp[0m | --------------------------------------------------
+2026-05-26 07:58:52,247 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='how many appointments do i have this week?'
+2026-05-26 07:58:52,247 [[31m[1mCRITICAL[0m] [36mapp[0m | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='how many appointments do i have this week?'
+2026-05-26 07:59:03,213 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-26 07:59:03,328 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='how many appointments do i have this week?'
+2026-05-26 07:59:03,328 [[32mINFO[0m] [36mapp[0m | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='how many appointments do i have this week?'
+2026-05-26 07:59:04,388 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='how many appointments do i have this week?'
+2026-05-26 07:59:04,388 [[31m[1mCRITICAL[0m] [36mapp[0m | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='how many appointments do i have this week?'
+2026-05-26 08:01:03,078 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 08:01:03,078 [[32mINFO[0m] [36mapp[0m | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 08:01:03,079 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 08:01:03,079 [[32mINFO[0m] [36mapp[0m | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 08:01:03,080 [INFO] app | --------------------------------------------------
+2026-05-26 08:01:03,080 [[32mINFO[0m] [36mapp[0m | --------------------------------------------------
+2026-05-26 08:01:13,258 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='what are my appointments for this week?'
+2026-05-26 08:01:13,258 [[31m[1mCRITICAL[0m] [36mapp[0m | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='what are my appointments for this week?'
+2026-05-26 08:01:18,861 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-26 08:01:18,957 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='what are my appointments for this week?'
+2026-05-26 08:01:18,957 [[32mINFO[0m] [36mapp[0m | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='what are my appointments for this week?'
+2026-05-26 08:01:19,624 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='what are my appointments for this week?'
+2026-05-26 08:01:19,624 [[31m[1mCRITICAL[0m] [36mapp[0m | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='what are my appointments for this week?'
+2026-05-26 08:02:34,197 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 08:02:34,197 [[32mINFO[0m] [36mapp[0m | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 08:02:34,198 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 08:02:34,198 [[32mINFO[0m] [36mapp[0m | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 08:02:34,199 [INFO] app | --------------------------------------------------
+2026-05-26 08:02:34,199 [[32mINFO[0m] [36mapp[0m | --------------------------------------------------
+2026-05-26 08:02:41,750 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='what are my appointments this week?'
+2026-05-26 08:02:41,750 [[31m[1mCRITICAL[0m] [36mapp[0m | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='what are my appointments this week?'
+2026-05-26 08:02:46,934 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-26 08:02:46,972 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='what are my appointments this week?'
+2026-05-26 08:02:46,972 [[32mINFO[0m] [36mapp[0m | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='what are my appointments this week?'
+2026-05-26 08:02:47,312 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='what are my appointments this week?'
+2026-05-26 08:02:47,312 [[31m[1mCRITICAL[0m] [36mapp[0m | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='what are my appointments this week?'
+2026-05-26 08:03:22,979 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-26 08:04:05,436 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-26 08:04:17,664 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=get_events | args='{"user_google_email": "royliangsehhaw@gmail.com", "calendar_id": "primary", "time_min": "2026-05-26", "time_max": "2026-06-02", "max_results": 100, "detailed": true}'
+2026-05-26 08:04:17,664 [[33mWARNING[0m] [36mapp[0m | ExecutorAgent.tool_call | user=local_user | tool=get_events | args='{"user_google_email": "royliangsehhaw@gmail.com", "calendar_id": "primary", "time_min": "2026-05-26", "time_max": "2026-06-02", "max_results": 100, "detailed": true}'
+2026-05-26 08:04:17,664 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=get_events | content='Successfully retrieved 2 events from calendar \'primary\' for royliangsehhaw@gmail.com:\n- "Year end company trip planning meeting" (Starts: 2026-05-27T10:00:00+08:00, Ends: 2026-05-27T13:00:00+08:00)\n  Description: Meeting with personnel department for year end company trip planning\n  Location: No Location\n  Attendees: None\n  Attendee Details: None\n  ID: jala4v4pdq0vv6njbb85iq2g4o | Link: https://www.google.com/calendar/event?eid=amFsYTR2NHBkcTB2djZuamJiODVpcTJnNG8gcm95bGlhbmdzZWhoYXdAbQ\n- "Complete Django Forms" (Starts: 2026-05-31T23:59:00+08:00, Ends: 2026-06-01T00:59:00+08:00)\n  Description: No Description\n  Location: No Location\n  Attendees: None\n  Attendee Details: None\n  ID: 0h3nj3hbomifpj51ekn873u99g | Link: https://www.google.com/calendar/event?eid=MGgzbmozaGJvbWlmcGo1MWVrbjg3M3U5OWcgcm95bGlhbmdzZWhoYXdAbQ'
+2026-05-26 08:04:17,664 [[33mWARNING[0m] [36mapp[0m | ExecutorAgent.tool_result | user=local_user | tool=get_events | content='Successfully retrieved 2 events from calendar \'primary\' for royliangsehhaw@gmail.com:\n- "Year end company trip planning meeting" (Starts: 2026-05-27T10:00:00+08:00, Ends: 2026-05-27T13:00:00+08:00)\n  Description: Meeting with personnel department for year end company trip planning\n  Location: No Location\n  Attendees: None\n  Attendee Details: None\n  ID: jala4v4pdq0vv6njbb85iq2g4o | Link: https://www.google.com/calendar/event?eid=amFsYTR2NHBkcTB2djZuamJiODVpcTJnNG8gcm95bGlhbmdzZWhoYXdAbQ\n- "Complete Django Forms" (Starts: 2026-05-31T23:59:00+08:00, Ends: 2026-06-01T00:59:00+08:00)\n  Description: No Description\n  Location: No Location\n  Attendees: None\n  Attendee Details: None\n  ID: 0h3nj3hbomifpj51ekn873u99g | Link: https://www.google.com/calendar/event?eid=MGgzbmozaGJvbWlmcGo1MWVrbjg3M3U5OWcgcm95bGlhbmdzZWhoYXdAbQ'
+2026-05-26 08:04:17,665 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=final_result | args='{"summary": "You have 2 appointments this week:\\n1. Year end company trip planning meeting on Wednesday, May 27, 2026 from 10:00 AM to 1:00 PM (timezone +08:00).\\n2. Complete Django Forms on Sunday, May 31, 2026 from 11:59 PM to Monday, June 1, 2026 12:59 AM (timezone +08:00).", "actions_taken": ["Retrieved events from primary calendar for the week of May 26 to June 2, 2026."], "missing_info": null}'
+2026-05-26 08:04:17,665 [[33mWARNING[0m] [36mapp[0m | ExecutorAgent.tool_call | user=local_user | tool=final_result | args='{"summary": "You have 2 appointments this week:\\n1. Year end company trip planning meeting on Wednesday, May 27, 2026 from 10:00 AM to 1:00 PM (timezone +08:00).\\n2. Complete Django Forms on Sunday, May 31, 2026 from 11:59 PM to Monday, June 1, 2026 12:59 AM (timezone +08:00).", "actions_taken": ["Retrieved events from primary calendar for the week of May 26 to June 2, 2026."], "missing_info": null}'
+2026-05-26 08:04:17,665 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=final_result | content='Final result processed.'
+2026-05-26 08:04:17,665 [[33mWARNING[0m] [36mapp[0m | ExecutorAgent.tool_result | user=local_user | tool=final_result | content='Final result processed.'
+2026-05-26 08:04:17,665 [CRITICAL] app | ExecutorAgent.usage | user=local_user | input=29482 | output=954 | total=30436
+2026-05-26 08:04:17,665 [[31m[1mCRITICAL[0m] [36mapp[0m | ExecutorAgent.usage | user=local_user | input=29482 | output=954 | total=30436
+2026-05-26 08:04:17,666 [INFO] app | ExecutorAgent.result | user=local_user | actions=['Retrieved events from primary calendar for the week of May 26 to June 2, 2026.'] | missing=None
+2026-05-26 08:04:17,666 [[32mINFO[0m] [36mapp[0m | ExecutorAgent.result | user=local_user | actions=['Retrieved events from primary calendar for the week of May 26 to June 2, 2026.'] | missing=None
+2026-05-26 08:04:25,131 [INFO] httpx | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-26 08:04:25,137 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=delegate_to_executor
+2026-05-26 08:04:25,137 [[33mWARNING[0m] [36mapp[0m | SupervisorAgent.tool_call | user=local_user | tool=delegate_to_executor
+2026-05-26 08:04:25,138 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=final_result
+2026-05-26 08:04:25,138 [[33mWARNING[0m] [36mapp[0m | SupervisorAgent.tool_call | user=local_user | tool=final_result
+2026-05-26 08:04:25,138 [CRITICAL] app | SupervisorAgent.usage | user=local_user | input=1754 | output=286 | total=2040
+2026-05-26 08:04:25,138 [[31m[1mCRITICAL[0m] [36mapp[0m | SupervisorAgent.usage | user=local_user | input=1754 | output=286 | total=2040
+2026-05-26 08:04:25,139 [INFO] app | SupervisorAgent.result | user=local_user | requires_followup=False | message='You have two appointments this week: a year‑end company trip planning meeting on Wednesday, May\u202f27,\u202f2026 from 10:00\u202fAM to 1:00\u202fPM, and a task to complete Django Forms on Sunday, May\u202f31,\u202f2026 from 11:59\u202fPM to 12:59\u202fAM (Monday, June\u202f1).'
+2026-05-26 08:04:25,139 [[32mINFO[0m] [36mapp[0m | SupervisorAgent.result | user=local_user | requires_followup=False | message='You have two appointments this week: a year‑end company trip planning meeting on Wednesday, May\u202f27,\u202f2026 from 10:00\u202fAM to 1:00\u202fPM, and a task to complete Django Forms on Sunday, May\u202f31,\u202f2026 from 11:59\u202fPM to 12:59\u202fAM (Monday, June\u202f1).'
+2026-05-26 08:09:00,701 [INFO] app | ********** Assistant stopped by user **********
+2026-05-26 08:09:00,701 [[32mINFO[0m] [36mapp[0m | ********** Assistant stopped by user **********
+2026-05-26 08:10:25,726 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 08:10:25,727 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 08:10:25,727 [INFO] app | --------------------------------------------------
+2026-05-26 08:10:35,561 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='how many appointments do i have this week?'
+2026-05-26 08:10:54,911 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='how many appointments do i have this week?'
+2026-05-26 08:10:55,280 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='how many appointments do i have this week?'
+2026-05-26 08:11:38,785 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=get_events | args='{"user_google_email": "royliangsehhaw@gmail.com", "calendar_id": "primary", "time_min": "2026-05-25", "time_max": "2026-06-01", "max_results": 100, "detailed": false}'
+2026-05-26 08:11:38,786 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=get_events | content='Successfully retrieved 3 events from calendar \'primary\' for royliangsehhaw@gmail.com:\n- "Sales Meeting" (Starts: 2026-05-25T10:00:00+08:00, Ends: 2026-05-25T13:00:00+08:00) ID: 22f7dvofomf0c3p6e8jqhup2gl | Link: https://www.google.com/calendar/event?eid=MjJmN2R2b2ZvbWYwYzNwNmU4anFodXAyZ2wgcm95bGlhbmdzZWhoYXdAbQ\n- "Year end company trip planning meeting" (Starts: 2026-05-27T10:00:00+08:00, Ends: 2026-05-27T13:00:00+08:00) ID: jala4v4pdq0vv6njbb85iq2g4o | Link: https://www.google.com/calendar/event?eid=amFsYTR2NHBkcTB2djZuamJiODVpcTJnNG8gcm95bGlhbmdzZWhoYXdAbQ\n- "Complete Django Forms" (Starts: 2026-05-31T23:59:00+08:00, Ends: 2026-06-01T00:59:00+08:00) ID: 0h3nj3hbomifpj51ekn873u99g | Link: https://www.google.com/calendar/event?eid=MGgzbmozaGJvbWlmcGo1MWVrbjg3M3U5OWcgcm95bGlhbmdzZWhoYXdAbQ'
+2026-05-26 08:11:38,786 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=final_result | args='{"summary": "You have 3 appointments this week.", "actions_taken": ["Retrieved events from primary calendar for May 25 to May 31, 2026."]}'
+2026-05-26 08:11:38,787 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=final_result | content='Final result processed.'
+2026-05-26 08:11:38,787 [CRITICAL] app | ExecutorAgent.usage | user=local_user | input=29575 | output=810 | total=30385
+2026-05-26 08:11:38,787 [INFO] app | ExecutorAgent.result | user=local_user | actions=['Retrieved events from primary calendar for May 25 to May 31, 2026.'] | missing=None
+2026-05-26 08:11:44,127 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=delegate_to_executor
+2026-05-26 08:11:44,127 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=final_result
+2026-05-26 08:11:44,128 [CRITICAL] app | SupervisorAgent.usage | user=local_user | input=1654 | output=195 | total=1849
+2026-05-26 08:11:44,128 [INFO] app | SupervisorAgent.result | user=local_user | requires_followup=False | message='You have three appointments scheduled for this week.'
+2026-05-26 08:45:11,639 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='which appointment requires an in person metting?'
+2026-05-26 08:45:35,651 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='which appointment requires an in person meeting?'
+2026-05-26 08:45:36,082 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='which appointment requires an in person meeting?'
+2026-05-26 08:46:26,835 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=get_events | args='{"user_google_email": "royliangsehhaw@gmail.com", "detailed": true, "include_attachments": false}'
+2026-05-26 08:46:26,835 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=get_events | content='Successfully retrieved 2 events from calendar \'primary\' for royliangsehhaw@gmail.com:\n- "Year end company trip planning meeting" (Starts: 2026-05-27T10:00:00+08:00, Ends: 2026-05-27T13:00:00+08:00)\n  Description: Meeting with personnel department for year end company trip planning\n  Location: No Location\n  Attendees: None\n  Attendee Details: None\n  ID: jala4v4pdq0vv6njbb85iq2g4o | Link: https://www.google.com/calendar/event?eid=amFsYTR2NHBkcTB2djZuamJiODVpcTJnNG8gcm95bGlhbmdzZWhoYXdAbQ\n- "Complete Django Forms" (Starts: 2026-05-31T23:59:00+08:00, Ends: 2026-06-01T00:59:00+08:00)\n  Description: No Description\n  Location: No Location\n  Attendees: None\n  Attendee Details: None\n  ID: 0h3nj3hbomifpj51ekn873u99g | Link: https://www.google.com/calendar/event?eid=MGgzbmozaGJvbWlmcGo1MWVrbjg3M3U5OWcgcm95bGlhbmdzZWhoYXdAbQ'
+2026-05-26 08:46:26,835 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=final_result | args='{"summary": "The \'Year end company trip planning meeting\' on 2026-05-27 from 10:00 to 13:00 (SGT) requires an in-person meeting, as it involves a meeting with the personnel department. The other event \'Complete Django Forms\' is a personal task with no meeting implied.", "actions_taken": ["Retrieved calendar events from primary calendar"], "missing_info": null}'
+2026-05-26 08:46:26,836 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=final_result | content='Final result processed.'
+2026-05-26 08:46:26,836 [CRITICAL] app | ExecutorAgent.usage | user=local_user | input=29433 | output=524 | total=29957
+2026-05-26 08:46:26,836 [INFO] app | ExecutorAgent.result | user=local_user | actions=['Retrieved calendar events from primary calendar'] | missing=None
+2026-05-26 08:46:35,351 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=delegate_to_executor
+2026-05-26 08:46:35,351 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=final_result
+2026-05-26 08:46:35,351 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=delegate_to_executor
+2026-05-26 08:46:35,352 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=final_result
+2026-05-26 08:46:35,352 [CRITICAL] app | SupervisorAgent.usage | user=local_user | input=2055 | output=287 | total=2342
+2026-05-26 08:46:35,352 [INFO] app | SupervisorAgent.result | user=local_user | requires_followup=False | message="The appointment that requires an in‑person meeting is the 'Year end company trip planning meeting' on May 27, 2026 from 10:00 to 13:00 (SGT)."
+2026-05-26 09:07:35,946 [INFO] app | ********** Assistant stopped by user **********
+2026-05-26 09:08:14,751 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:08:14,752 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:08:14,752 [INFO] app | --------------------------------------------------
+2026-05-26 09:08:23,563 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='do i still have any pending tasks?'
+2026-05-26 09:08:25,683 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='do i still have any pending tasks?'
+2026-05-26 09:08:26,012 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='do i still have any pending tasks?'
+2026-05-26 09:16:07,688 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:16:07,689 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:16:07,689 [INFO] app | --------------------------------------------------
+2026-05-26 09:16:12,179 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='any peding tasks?'
+2026-05-26 09:19:05,484 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:19:05,484 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:19:05,484 [INFO] app | --------------------------------------------------
+2026-05-26 09:19:08,985 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='any pending tasks?'
+2026-05-26 09:20:44,317 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:20:44,318 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:20:44,318 [INFO] app | --------------------------------------------------
+2026-05-26 09:20:52,063 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='any pending tasks?'
+2026-05-26 09:24:00,104 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:24:00,104 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:24:00,105 [INFO] app | --------------------------------------------------
+2026-05-26 09:24:06,992 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='any pending tasks?'
+2026-05-26 09:25:49,742 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:25:49,743 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:25:49,743 [INFO] app | --------------------------------------------------
+2026-05-26 09:25:55,573 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='any pending tasks?'
+2026-05-26 09:26:30,031 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:26:30,032 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:26:30,032 [INFO] app | --------------------------------------------------
+2026-05-26 09:26:34,503 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='any pending tasks?'
+2026-05-26 09:26:35,914 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='Check for any pending tasks.'
+2026-05-26 09:26:36,285 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='Check for any pending tasks.'
+2026-05-26 09:26:47,314 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_task_lists | args='{"user_google_email": "royliangsehhaw@gmail.com"}'
+2026-05-26 09:26:47,314 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_task_lists | content='Task Lists for royliangsehhaw@gmail.com:\n- Documentation (ID: MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow)\n  Updated: 2026-05-25T08:29:26.119Z\n- Development (ID: QVV2WDFwQmZDNW5waHkxRg)\n  Updated: 2026-05-25T08:29:26.119Z\n- Deployment (ID: eS0zNjZsTlYxWmRHcVB4Sg)\n  Updated: 2026-05-24T10:48:11.946Z\n'
+2026-05-26 09:26:47,315 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow", "show_completed": false}'
+2026-05-26 09:26:47,315 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "QVV2WDFwQmZDNW5waHkxRg", "show_completed": false}'
+2026-05-26 09:26:47,315 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "eS0zNjZsTlYxWmRHcVB4Sg", "show_completed": false}'
+2026-05-26 09:26:47,316 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='Tasks in list MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow for royliangsehhaw@gmail.com:\n- Year End Trip Planning (ID: bzhvbHEzYTNpMDB1Rno3ag)\n  Status: needsAction\n  Due: 2026-05-31T00:00:00.000Z\n  Updated: 2026-05-25T06:55:49.395Z\n\n'
+2026-05-26 09:26:47,316 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='Tasks in list QVV2WDFwQmZDNW5waHkxRg for royliangsehhaw@gmail.com:\n- MCP verification task (ID: RDZhOHB0WEw4SEd6YVZYdA)\n  Status: needsAction\n  Due: 2026-05-28T00:00:00.000Z\n  Notes: Created by test_mcp_tasks.py — safe to delete.\n  Updated: 2026-05-25T08:29:26.119Z\n\n'
+2026-05-26 09:26:47,316 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='No tasks found in task list eS0zNjZsTlYxWmRHcVB4Sg for royliangsehhaw@gmail.com.'
+2026-05-26 09:26:47,316 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=final_result | args='{"summary": "There are two pending tasks:\\n1. **Year End Trip Planning** (Due: May 31, 2026) in the Documentation list.\\n2. **MCP verification task** (Due: May 28, 2026) in the Development list. The note indicates this task was created by a test script and can be safely deleted if no longer needed.", "actions_taken": ["Retrieved task lists: Documentation, Development, Deployment.", "Retrieved pending tasks from Documentation list: Year End Trip Planning (due 2026-05-31).", "Retrieved pending tasks from Development list: MCP verification task (due 2026-05-28).", "Confirmed no pending tasks in Deployment list."], "missing_info": null}'
+2026-05-26 09:26:47,317 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=final_result | content='Final result processed.'
+2026-05-26 09:26:47,317 [CRITICAL] app | ExecutorAgent.usage | user=local_user | input=36602 | output=322 | total=36924
+2026-05-26 09:26:47,317 [INFO] app | ExecutorAgent.result | user=local_user | actions=['Retrieved task lists: Documentation, Development, Deployment.', 'Retrieved pending tasks from Documentation list: Year End Trip Planning (due 2026-05-31).', 'Retrieved pending tasks from Development list: MCP verification task (due 2026-05-28).', 'Confirmed no pending tasks in Deployment list.'] | missing=None
+2026-05-26 09:26:48,974 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=delegate_to_executor
+2026-05-26 09:26:48,974 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=final_result
+2026-05-26 09:26:48,975 [CRITICAL] app | SupervisorAgent.usage | user=local_user | input=1284 | output=151 | total=1435
+2026-05-26 09:26:48,975 [INFO] app | SupervisorAgent.result | user=local_user | requires_followup=True | message='I’ve found two pending tasks on your list:\n\n1. **Year End Trip Planning** (due May 31, 2026) — this is in your Documentation list.\n2. **MCP verification task** (due May 28, 2026) — this is in Development. The note says it was created by a test script, so it might be safe to delete if it’s no longer needed.\n\nWould you like me to handle either of these, or do you want to review them first?'
+2026-05-26 09:32:31,908 [INFO] app | ********** Assistant stopped by user **********
+2026-05-26 09:32:43,122 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-05-26 09:32:43,123 [INFO] app | Assistant started | user=local_user | email=royliangsehhaw@gmail.com
+2026-05-26 09:32:43,123 [INFO] app | --------------------------------------------------
+2026-05-26 09:32:46,692 [CRITICAL] app | SupervisorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | input='any pending tasks?'
+2026-05-26 09:32:52,421 [INFO] app | SupervisorAgent | tool=delegate_to_executor | user=local_user | sub_task='any pending tasks?'
+2026-05-26 09:32:52,737 [CRITICAL] app | ExecutorAgent.run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='any pending tasks?'
+2026-05-26 09:33:49,803 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_task_lists | args='{}'
+2026-05-26 09:33:49,803 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_task_lists | content='Task Lists for royliangsehhaw@gmail.com:\n- Documentation (ID: MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow)\n  Updated: 2026-05-25T08:29:26.119Z\n- Development (ID: QVV2WDFwQmZDNW5waHkxRg)\n  Updated: 2026-05-25T08:29:26.119Z\n- Deployment (ID: eS0zNjZsTlYxWmRHcVB4Sg)\n  Updated: 2026-05-24T10:48:11.946Z\n'
+2026-05-26 09:33:49,804 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow", "show_completed": false}'
+2026-05-26 09:33:49,804 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "QVV2WDFwQmZDNW5waHkxRg", "show_completed": false}'
+2026-05-26 09:33:49,804 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "eS0zNjZsTlYxWmRHcVB4Sg", "show_completed": false}'
+2026-05-26 09:33:49,804 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='Tasks in list MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow for royliangsehhaw@gmail.com:\n- Year End Trip Planning (ID: bzhvbHEzYTNpMDB1Rno3ag)\n  Status: needsAction\n  Due: 2026-05-31T00:00:00.000Z\n  Updated: 2026-05-25T06:55:49.395Z\n\n'
+2026-05-26 09:33:49,805 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='Tasks in list QVV2WDFwQmZDNW5waHkxRg for royliangsehhaw@gmail.com:\n- MCP verification task (ID: RDZhOHB0WEw4SEd6YVZYdA)\n  Status: needsAction\n  Due: 2026-05-28T00:00:00.000Z\n  Notes: Created by test_mcp_tasks.py — safe to delete.\n  Updated: 2026-05-25T08:29:26.119Z\n\n'
+2026-05-26 09:33:49,805 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='No tasks found in task list eS0zNjZsTlYxWmRHcVB4Sg for royliangsehhaw@gmail.com.'
+2026-05-26 09:33:49,805 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_task_lists | args='{}'
+2026-05-26 09:33:49,806 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow", "show_completed": false}'
+2026-05-26 09:33:49,806 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "QVV2WDFwQmZDNW5waHkxRg", "show_completed": false}'
+2026-05-26 09:33:49,806 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=list_tasks | args='{"task_list_id": "eS0zNjZsTlYxWmRHcVB4Sg", "show_completed": false}'
+2026-05-26 09:33:49,806 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_task_lists | content='Task Lists for royliangsehhaw@gmail.com:\n- Documentation (ID: MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow)\n  Updated: 2026-05-25T08:29:26.119Z\n- Development (ID: QVV2WDFwQmZDNW5waHkxRg)\n  Updated: 2026-05-25T08:29:26.119Z\n- Deployment (ID: eS0zNjZsTlYxWmRHcVB4Sg)\n  Updated: 2026-05-24T10:48:11.946Z\n'
+2026-05-26 09:33:49,807 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='Tasks in list MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow for royliangsehhaw@gmail.com:\n- Year End Trip Planning (ID: bzhvbHEzYTNpMDB1Rno3ag)\n  Status: needsAction\n  Due: 2026-05-31T00:00:00.000Z\n  Updated: 2026-05-25T06:55:49.395Z\n\n'
+2026-05-26 09:33:49,807 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='Tasks in list QVV2WDFwQmZDNW5waHkxRg for royliangsehhaw@gmail.com:\n- MCP verification task (ID: RDZhOHB0WEw4SEd6YVZYdA)\n  Status: needsAction\n  Due: 2026-05-28T00:00:00.000Z\n  Notes: Created by test_mcp_tasks.py — safe to delete.\n  Updated: 2026-05-25T08:29:26.119Z\n\n'
+2026-05-26 09:33:49,807 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=list_tasks | content='No tasks found in task list eS0zNjZsTlYxWmRHcVB4Sg for royliangsehhaw@gmail.com.'
+2026-05-26 09:33:49,807 [WARNING] app | ExecutorAgent.tool_call | user=local_user | tool=final_result | args='{"summary": "Found 2 pending tasks: \'Year End Trip Planning\' (due 2026-05-31) in Documentation list, and \'MCP verification task\' (due 2026-05-28) in Development list.", "actions_taken": ["Listed task lists", "Listed tasks in Documentation list (ID: MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow)", "Listed tasks in Development list (ID: QVV2WDFwQmZDNW5waHkxRg)", "Listed tasks in Deployment list (ID: eS0zNjZsTlYxWmRHcVB4Sg)"], "missing_info": null}'
+2026-05-26 09:33:49,808 [WARNING] app | ExecutorAgent.tool_result | user=local_user | tool=final_result | content='Final result processed.'
+2026-05-26 09:33:49,808 [CRITICAL] app | ExecutorAgent.usage | user=local_user | input=60258 | output=979 | total=61237
+2026-05-26 09:33:49,808 [INFO] app | ExecutorAgent.result | user=local_user | actions=['Listed task lists', 'Listed tasks in Documentation list (ID: MDE4MDY4MTgwNzU2Mzc2MDg2MzM6MDow)', 'Listed tasks in Development list (ID: QVV2WDFwQmZDNW5waHkxRg)', 'Listed tasks in Deployment list (ID: eS0zNjZsTlYxWmRHcVB4Sg)'] | missing=None
+2026-05-26 09:33:56,110 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=delegate_to_executor
+2026-05-26 09:33:56,110 [WARNING] app | SupervisorAgent.tool_call | user=local_user | tool=final_result
+2026-05-26 09:33:56,110 [CRITICAL] app | SupervisorAgent.usage | user=local_user | input=1764 | output=258 | total=2022
+2026-05-26 09:33:56,111 [INFO] app | SupervisorAgent.result | user=local_user | requires_followup=False | message="You have two pending tasks: 'Year End Trip Planning' due May 31, 2026 in the Documentation list, and 'MCP verification task' due May 28, 2026 in the Development list."
+2026-05-26 09:53:30,641 [INFO] app | ********** Assistant stopped by user **********

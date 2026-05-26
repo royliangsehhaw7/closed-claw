@@ -117,7 +117,8 @@ class SupervisorAgent(BaseAgent):
             message_history=self._history,
         )
         # Persist history for the next turn in this session
-        self._history = result.all_messages()
+        # self._history = result.all_messages()
+        self._history = result.new_messages()
 
         # Log supervisor tool calls (delegate_to_executor calls)
         self._log_messages(deps.user_id, result.all_messages())

@@ -41,7 +41,10 @@ class LLMFactory:
                 app_url="https://openrouter.ai/api/v1",
             ),
             settings=OpenRouterModelSettings(
-                tool_choice="auto",
+                # tool_choice="auto",
                 temperature=0.15,
+                openrouter_provider={
+                    "require_parameters": True
+                }
             ),
         )

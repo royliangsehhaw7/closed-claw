@@ -70,7 +70,7 @@ from pydantic_ai.mcp import MCPServerStdio
 def google_workspace_server(
     services: list[str],
     user_email: str | None = None,
-    timeout: int = 30,
+    timeout: int = 60,
 ) -> MCPServerStdio:
     env = {**os.environ}
     env["GOOGLE_OAUTH_CLIENT_ID"] = os.getenv("GOOGLE_OAUTH_CLIENT_ID", "")
