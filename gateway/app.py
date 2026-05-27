@@ -94,7 +94,6 @@ async def get_info(request: Request):
         "user_agent": user_agent,
         "cookies": all_cookies
     }
-
 @app.get("/basic2")           # ?param1=1&param2=2
 async def get_data(param1: int, param2: int):
     return {
@@ -107,7 +106,6 @@ async def read_all_queries(request: Request):
     # Converts all query parameters into a standard Python dictionary
     query_params = dict(request.query_params)
     return {"all_params": query_params}
-
 @app.get("/basic4/{value1}/param2/{value2}")
 async def get_path_data(value1: int, value2: int):
     return {
@@ -115,8 +113,6 @@ async def get_path_data(value1: int, value2: int):
         "param2_value": value2,
         "product": value1 * value2
     }
-
-
 @app.post("/post")
 async def get_raw_body(request: Request):
     # Access raw body as bytes
@@ -125,7 +121,6 @@ async def get_raw_body(request: Request):
     json_body = await request.json()
     
     return {"raw": raw_body, "json": json_body}
-
 
 
 
@@ -151,7 +146,7 @@ async def assistant(chat_id: int, chat: str) -> dict:
 
 
 # ── webhook ───────────────────────────────────────────────────────────────────
-
+## THIS WILL BE THE ENDPOINT FOR TELEGRAM BOT MESSAGES ##
 @app.post("/webhook/{secret}")
 async def webhook(secret: str, request: Request) -> dict:
     """Receive a Telegram Update and process it.
