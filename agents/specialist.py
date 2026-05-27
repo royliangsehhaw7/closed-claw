@@ -93,11 +93,11 @@ class SpecialistAgent(BaseAgent):
             self._key, deps.user_id, self._user_email, sub_task,
         )
 
-        async with self._agent:
-            result = await self._agent.run(
-                user_prompt=sub_task,
-                deps=deps,
-            )
+        # async with self._agent: # DONT USE THIS ANYWORE, GETTING FROM POOL
+        result = await self._agent.run(
+            user_prompt=sub_task,
+            deps=deps,
+        )
 
         self._log_messages(result.all_messages())
 
