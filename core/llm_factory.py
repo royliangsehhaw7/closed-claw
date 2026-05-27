@@ -39,7 +39,8 @@ class LLMFactory:
             provider=OpenRouterProvider(
                 api_key=os.getenv("OPENROUTER_API_KEY"),
                 app_url="https://openrouter.ai/api/v1",
-                app_name=os.getenv("OPENROUTER_APP_NAME")
+                # app_name=os.getenv("OPENROUTER_APP_NAME") 
+                # headers={"X-Title": os.getenv("OPENROUTER_APP_NAME", "closed-claw")},            
             ),
             settings=OpenRouterModelSettings(
                 tool_choice="auto",
