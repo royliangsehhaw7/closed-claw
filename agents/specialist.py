@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from datetime import date
 from typing import Any
 
@@ -41,7 +42,7 @@ class SpecialistAgent(BaseAgent):
         self._user_email = user_email
 
         self._agent = Agent(
-            model=_factory.get_model(),
+            model=_factory.get_model(os.getenv("SPECIALIST_MODEL")),
             system_prompt=self._build_system_prompt(registration),
             output_type=SpecialistResult,
             deps_type=AgentDeps,
@@ -57,22 +58,16 @@ class SpecialistAgent(BaseAgent):
     def _build_system_prompt(self, reg: AgentRegistration) -> str:
         today = date.today().isoformat()
         return (f"""
-            Today's date is {today}.
-            You are a specialist agent. You own: {reg.owns}
-
+            Today's date is {today}. You are a specialist agent. You own: {reg.owns}
+            
             Rules:
-            - Use all available tools necessary to fully complete the request.
-            - Act immediately using the information provided. Do not ask for confirmation before acting.
-            - Only pause if something required is genuinely missing. If so, set missing_info to describe 
-            exactly what is needed and do not call any action tools.
-            - Populate actions_taken with one specific entry per tool call:
-            include titles, dates, recipients as applicable.
+            - Use all tools necessary to fully complete your part of the request. Act immediately.
+            - Only pause if something required is genuinely missing and cannot be reasonably inferred.
+              If so, set missing_info exactly and do not call any tools.
+            - Log one actions_taken entry per tool call: include titles, dates, recipients.
             - Never invent IDs, names, or addresses. If a lookup returns nothing, say so in summary.
-            - You own {reg.owns} only. Do not attempt actions outside your domain.
-            - Focus exclusively on the parts of the request that fall within your domain.
-            - Ignore everything else — another specialist handles it.
-            - Complete your part fully and return."            
-            """
+            - Ignore everything outside your domain — another specialist handles it.
+        """
         )
 
     def _log_messages(self, messages: list[Any]) -> None:

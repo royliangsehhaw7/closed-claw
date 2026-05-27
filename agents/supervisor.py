@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import asyncio
+import os
 from typing import Any
 
 from pydantic_ai import Agent, RunContext
@@ -37,7 +37,7 @@ class SupervisorAgent(BaseAgent):
         super().__init__(name="supervisor")
 
         agent = Agent(
-            model=_factory.get_model(),
+            model=_factory.get_model(os.getenv("SUPERVISOR_MODEL")),
             system_prompt=self._build_system_prompt(),
             output_type=SupervisorResponse,
             deps_type=AgentDeps,
@@ -99,26 +99,23 @@ class SupervisorAgent(BaseAgent):
         registry_block = build_registry_prompt()
         return (f"""
             You are a personal assistant. You have one tool: delegate_to_specialists.
-        
             {registry_block}
-
+            
             When to delegate:
-                - The user wants something done — any action involving their data,
-                  services, or accounts → delegate_to_specialists.
-                - Select specialist_keys based on the registry descriptions above.
-                - For a task with a due date, always include both 'tasks' and 'calendar' 
-                — a matching calendar event should always be created.
-                - Pass the full request as sub_task. Include every detail. Do not filter or summarise.
-                - When unsure which specialists apply, include all that could plausibly be needed.
-
+            - The user wants something done — any action involving their data, services, or accounts → delegate_to_specialists.
+            - Select specialist_keys based on the registry descriptions above.
+            - For a task with a due date, always include both 'tasks' and 'calendar' — a matching calendar event should always be created.
+            - Pass the full request as sub_task. Include every detail. Do not filter or summarise.
+            - When unsure which specialists apply, include all that could plausibly be needed.
+            
             When NOT to delegate:
-                - General conversation, greetings, or questions you can answer directly → respond without calling any tool.
-
+            - General conversation, greetings, or questions you can answer directly → respond without calling any tool.
+            
             After specialists return:
-                - Use the merged summary to compose a natural, conversational message.
-                - If any specialist set missing_info, relay that question to the user and set requires_followup=True.
-                - If all actions completed, set requires_followup=False.
-                - Do not repeat summaries verbatim. Rewrite for tone.
+            - Report exactly what was found or done. Be concise and direct.
+            - Do NOT offer follow-ups, suggestions, or 'would you like me to...' phrases.
+            - If any specialist set missing_info, ask the user for that missing information only. Set requires_followup=True.
+            - If all actions completed, set requires_followup=False.
             """
         )
 
@@ -133,6 +130,9 @@ class SupervisorAgent(BaseAgent):
                             user_id, part.tool_name,
                         )
 
+
+    # IMPORTANT (FINE TUNING) 
+    MAX_HISTORY = 5
     async def run(self, user_input: str, deps: AgentDeps) -> SupervisorResponse:
         logger.warning(
             "SupervisorAgent.run | user=%s | email=%s | input=%r",
@@ -142,9 +142,9 @@ class SupervisorAgent(BaseAgent):
         result = await self._agent.run(
             user_prompt=user_input,
             deps=deps,
-            message_history=self._history,
+            message_history=self._history[-self.MAX_HISTORY:],
         )
-        self._history = result.all_messages()
+        self._history = result.all_messages()[-self.MAX_HISTORY:]
 
         self._log_messages(deps.user_id, result.all_messages())
 

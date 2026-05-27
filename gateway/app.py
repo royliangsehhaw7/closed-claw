@@ -1,0 +1,224 @@
+from __future__ import annotations
+
+import os
+import uuid
+from contextlib import asynccontextmanager
+from datetime import datetime, timezone
+
+from fastapi import FastAPI, HTTPException, Request
+
+from agents.supervisor import SupervisorAgent
+from core.deps import AgentDeps
+from core.logger import logger
+from gateway.telegram_client import send_message
+from memory.sqlite_store import SQLiteStore
+from schemas.turn_record import TurnRecord
+
+
+#
+# CMD: uvicorn gateway.app:app --host 0.0.0.0 --port 8000 --reload
+#
+
+
+# ── environment ───────────────────────────────────────────────────────────────
+
+_WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
+_ALLOWED_CHAT_ID = int(os.getenv("TELEGRAM_CHAT_ID", "0"))
+_USER_ID = os.getenv("USER_ID", "local_user")
+_USER_EMAIL = os.getenv("USER_GOOGLE_EMAIL", "")
+_LLM_MODEL = os.getenv("LLM_MODEL", "")
+
+# ── application state ─────────────────────────────────────────────────────────
+
+_supervisor: SupervisorAgent
+_store: SQLiteStore
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup and shutdown logic.
+
+    Runs once when the process starts. Validates required config, initialises
+    the SQLite store, and builds the SupervisorAgent. All three are reused
+    across every request — not rebuilt per message.
+
+    Raises RuntimeError on missing config so the process fails fast with a
+    clear error rather than silently mishandling messages.
+    """
+    global _supervisor, _store
+
+    if not _USER_EMAIL:
+        raise RuntimeError("USER_GOOGLE_EMAIL is not set")
+    if not _WEBHOOK_SECRET:
+        raise RuntimeError("WEBHOOK_SECRET is not set")
+    if not _ALLOWED_CHAT_ID:
+        raise RuntimeError("TELEGRAM_CHAT_ID is not set")
+
+    _store = SQLiteStore()
+    await _store.initialise()
+
+    _supervisor = SupervisorAgent()
+
+    logger.info(
+        "gateway | started | user=%s | email=%s | allowed_chat_id=%d",
+        _USER_ID, _USER_EMAIL, _ALLOWED_CHAT_ID,
+    )
+    yield
+    logger.info("gateway | shutdown")
+
+
+app = FastAPI(lifespan=lifespan)
+
+
+# ── health ────────────────────────────────────────────────────────────────────
+
+@app.get("/health")
+async def health() -> dict:
+    """Health check endpoint. Returns 200 when the gateway is ready."""
+    return {"status": "ok"}
+
+
+
+# ── basic apis ────────────────────────────────────────────────────────────────────
+app.get("/basic1")
+async def get_info(request: Request):
+    # Access client IP
+    client_host = request.client.host    
+    # Access headers
+    user_agent = request.headers.get("user-agent")    
+    # Access cookies
+    all_cookies = request.cookies
+    
+    return {
+        "ip": client_host, 
+        "user_agent": user_agent,
+        "cookies": all_cookies
+    }
+
+@app.get("/basic2")           # ?param1=1&param2=2
+async def get_data(param1: int, param2: int):
+    return {
+        "param1": param1,
+        "param2": param2,
+        "sum": param1 + param2
+    }
+@app.get("/basic3")          # ?name=john&age=30&role=admin
+async def read_all_queries(request: Request):
+    # Converts all query parameters into a standard Python dictionary
+    query_params = dict(request.query_params)
+    return {"all_params": query_params}
+
+@app.get("/basic4/{value1}/param2/{value2}")
+async def get_path_data(value1: int, value2: int):
+    return {
+        "param1_value": value1,
+        "param2_value": value2,
+        "product": value1 * value2
+    }
+
+
+@app.post("/post")
+async def get_raw_body(request: Request):
+    # Access raw body as bytes
+    raw_body = await request.body()
+    # Access body parsed as JSON (if content-type is application/json)
+    json_body = await request.json()
+    
+    return {"raw": raw_body, "json": json_body}
+
+
+
+
+# ── assistant ────────────────────────────────────────────────────────────────────
+@app.post("/assistant/id/{chat_id}/msg/{chat}")
+async def assistant(chat_id: int, chat: str) -> dict:
+    deps = AgentDeps(
+        user_id=_USER_ID,
+        user_email=_USER_EMAIL,
+    )
+
+    # # 6. Run agent loop synchronously — Stage 3 moves this to a Redis queue
+    try:
+        response = await _supervisor.run(chat, deps)
+    except Exception:
+        logger.exception("webhook | agent loop failed | chat_id=%d", chat_id)
+        await send_message(chat_id, "Something went wrong. Please try again.")
+        return {"ok": True}
+
+    # 7. Reply
+    return {'message': response.message}
+
+
+
+# ── webhook ───────────────────────────────────────────────────────────────────
+
+@app.post("/webhook/{secret}")
+async def webhook(secret: str, request: Request) -> dict:
+    """Receive a Telegram Update and process it.
+
+    Always returns 200 for non-403 responses — even for ignored messages —
+    so Telegram does not retry. Telegram retries delivery on any non-200
+    response for up to 24 hours.
+    """
+    # 1. Validate secret
+    if secret != _WEBHOOK_SECRET:
+        logger.warning("webhook | invalid secret | received=%r", secret)
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    update = await request.json()
+    logger.debug("webhook | update=%r", update)
+
+    # # 2. Extract message — ignore edits, reactions, and other non-message updates
+    message = update.get("message")
+    if not message:
+        return {"ok": True}
+
+    chat_id: int = message.get("chat", {}).get("id", 0)
+    text: str = message.get("text", "").strip()
+
+    # 3. Allowlist check — only your chat_id is permitted this stage
+    if chat_id != _ALLOWED_CHAT_ID:
+        logger.warning("webhook | unauthorised chat_id=%d | ignoring", chat_id)
+        return {"ok": True}
+
+    # 4. Handle commands; ignore empty messages
+    if not text:
+        return {"ok": True}
+    if text.startswith("/"):
+        if text == "/start":
+            await send_message(chat_id, "Assistant ready. Send me a message.")
+        return {"ok": True}
+
+    logger.info("webhook | chat_id=%d | text=%r", chat_id, text)
+
+    # 5. Build deps — identity resolved here, never inside agents
+    deps = AgentDeps(
+        user_id=_USER_ID,
+        user_email=_USER_EMAIL,
+    )
+
+    # # 6. Run agent loop synchronously — Stage 3 moves this to a Redis queue
+    try:
+        response = await _supervisor.run(text, deps)
+    except Exception:
+        logger.exception("webhook | agent loop failed | chat_id=%d", chat_id)
+        await send_message(chat_id, "Something went wrong. Please try again.")
+        return {"ok": True}
+
+    # 7. Reply
+    await send_message(chat_id, response.message)
+
+    # 8. Write turn record
+    record = TurnRecord(
+        turn_id=str(uuid.uuid4()),
+        user_id=_USER_ID,
+        user_email=_USER_EMAIL,
+        agent_name="supervisor",
+        user_input=text,
+        agent_output=response.message,
+        model=_LLM_MODEL,
+        timestamp=datetime.now(tz=timezone.utc),
+    )
+    await _store.write_turn(record)
+
+    return {"ok": True}
