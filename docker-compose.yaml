@@ -1,0 +1,10 @@
+services:
+  closed-claw:
+    build: .
+    container_name: closed-claw-dev
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "10000:10000"
+    volumes:
+      - C:/Users/liang/.google_workspace_mcp/credentials:/root/.google_workspace_mcp/credentials
