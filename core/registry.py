@@ -57,7 +57,7 @@ AGENT_REGISTRY: dict[str, AgentRegistration] = {
         services=["calendar"],
         owns="Google Calendar — event creation, listing, availability checks.",
     ),
-    "gmail": AgentRegistration(
+    "email": AgentRegistration(
         description=(
             "Gmail — send emails, read inbox, search messages. Use for any "
             "request that involves sending or reading email."

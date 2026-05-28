@@ -1,6 +1,13 @@
 from google_auth_oauthlib.flow import InstalledAppFlow
 import json, os
 
+"""
+Must sent $env: for both    GOOGLE_OAUTH_CLIENT_ID
+                            GOOGLE_OAUTH_CLIENT_SECRET
+"""
+
+
+
 SCOPES = [
     "https://www.googleapis.com/auth/tasks",
     "https://www.googleapis.com/auth/calendar",
