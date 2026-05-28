@@ -46,7 +46,8 @@ class SpecialistAgent(BaseAgent):
             system_prompt=self._build_system_prompt(registration),
             output_type=SpecialistResult,
             deps_type=AgentDeps,
-            toolsets=[get_pool_server(registration.services, user_email)]            
+            toolsets=[get_pool_server(registration.services, user_email)],
+            retries=3
             # toolsets=[
             #     google_workspace_server(
             #         registration.services,
@@ -66,7 +67,10 @@ class SpecialistAgent(BaseAgent):
               If so, set missing_info exactly and do not call any tools.
             - Log one actions_taken entry per tool call: include titles, dates, recipients.
             - Never invent IDs, names, or addresses. If a lookup returns nothing, say so in summary.
-            - Ignore everything outside your domain — another specialist handles it.
+            - Before modifying, completing, or deleting any item, search all available 
+              containers first. Never assume where an item lives.
+            - Match by exact name. If no exact match found, report what exists and do not act.            
+            - Ignore everything outside your domain — another specialist handles it.        
         """
         )
 
