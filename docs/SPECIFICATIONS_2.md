@@ -429,26 +429,34 @@ Telegram.
 > Here, we will be registering the webhook with ngrok auto generated URL. THIS IS NOT FOR PRODUCTIUON
 
 You register the webhook URL with Telegram once ngrok is running (Phase 2) or
-when you have a production URL (Phase 4). The URL format is:
-
-```
-https://<your-public-url>/webhook/<WEBHOOK_SECRET>
-```
+when you have a production URL (Phase 4)
 
 Registration command (PowerShell):
+```
 Create a new file `register_webhook.ps1` and copy the commands
 
 ```text
-$TOKEN="<<TELEGRAM_BOT_TOKEN>>"
-$NGROK="https://a1b2c3d4.ngrok-free.app"   # your current ngrok URL
-$SECRET="<<WEBHOOK_SECRET>>"
+$TOKEN   = $env:TELEGRAM_BOT_TOKEN
+$NGROK   = $env:NGROK_PUBLIC_URL
+$SECRET  = $env:WEBHOOK_SECRET
+
+## CHECKS
+## CMD: Get-ChildItem env:TELEGRAM_BOT_TOKEN, env:NGROK_PUBLIC_URL, env:WEBHOOK_SECRET
+## RMB: no trailing '/' in the url
+
+
+# Verify required environment variables are not empty
+if (-not $TOKEN -or -not $NGROK -or -not $SECRET) {
+    Throw "Missing required environment variables!"
+}
 
 Invoke-WebRequest -Uri "https://api.telegram.org/bot$TOKEN/setWebhook" `
     -Method POST `
     -ContentType "application/json" `
     -Body (@{
-        url             = "$NGROK/webhook/$SECRET"
-        allowed_updates = @("message")
+        url                  = "$NGROK/webhook/$SECRET"
+        allowed_updates      = @("message")
+        drop_pending_updates = $true
     } | ConvertTo-Json)
 ```
 
@@ -460,6 +468,12 @@ Expected response:
 ```json
 {"ok": true, "result": true, "description": "Webhook was set"}
 ```
+
+>[!WARNING] Might have to delete previous webhooks from telegram first
+>```
+>https://api.telegram.org/bot<TOKEN>/deleteWebhook
+>```
+
 
 Verify registration:
 ```powershell
@@ -828,62 +842,72 @@ async def webhook(secret: str, request: Request) -> dict:
 
 ---
 
-16. Dockerfile, .dockerignore, and docker-compose.yml
+## 16. Dockerfile, .dockerignore, and docker-compose.yml
 What is Docker and why is it used here?
 Docker packages your application and everything it needs (Python version,
 dependencies, file structure) into a single portable unit called an image.
 Running that image creates a container — an isolated process that behaves
 identically on your laptop, a colleague's machine, or any cloud server.
+
 Without Docker, deploying means manually installing Python, recreating your
 virtualenv, and hoping the server environment matches your local one. With Docker,
 you ship the environment itself.
-Three concepts to know:
 
-Image — the blueprint, built from your Dockerfile. Read-only. Built once,
+Three concepts to know:
+- Image — the blueprint, built from your Dockerfile. Read-only. Built once,
 run anywhere.
-Container — a running instance of an image. You can run many containers from
+- Container — a running instance of an image. You can run many containers from
 the same image.
-Docker Desktop — the GUI application that runs the Docker engine on Windows.
+- Docker Desktop — the GUI application that runs the Docker engine on Windows.
 Must be running before any docker commands work.
 
 
-What Docker Actually Does Here
+### What Docker Actually Does Here
 When you run uvicorn gateway.app:app locally, Python finds your source files
 because you are sitting in the project directory and your virtualenv has all the
 packages installed. Docker replicates this environment inside an isolated container
 so the same app runs identically anywhere.
+
 The Dockerfile is a recipe that tells Docker:
+- Start from a clean Python 3.12 environment
+- Install uv (needed so uvx workspace-mcp works at runtime)
+- Copy your requirements.txt and install all Python packages
+- Copy your project source code
+- When the container starts, run uvicorn gateway.app:app
 
-Start from a clean Python 3.12 environment
-Install uv (needed so uvx workspace-mcp works at runtime)
-Copy your requirements.txt and install all Python packages
-Copy your project source code
-When the container starts, run uvicorn gateway.app:app
-
-What is NOT in the image: your .env file and your Google OAuth credentials.
+**What is NOT in the image**: your .env file and your Google OAuth credentials.
 These are secrets and must never be baked in. They are provided at runtime via
 docker-compose.yml.
 
-Where workspace-mcp Stores Its Credentials
+### Where workspace-mcp Stores Its Credentials
 This is the most important thing to understand before mounting any volume.
 workspace-mcp runs its own internal OAuth flow and saves credentials to:
+```
 /root/.google_workspace_mcp/credentials/
-This is different from /root/.local/share/workspace-mcp/credentials/. The
+```
+
+This is different from `/root/.local/share/workspace-mcp/credentials/`. The
 auth_once.py script from Stage 1d saves tokens to the wrong path for Docker.
-Do not use auth_once.py with Docker. Instead, let workspace-mcp do its
+
+Do not use `auth_once.py` with Docker. Instead, let workspace-mcp do its
 own auth flow the first time the container runs (see Step 18 below). After that,
 the token is saved inside the container's mounted volume and survives restarts.
+
 On your Windows machine, the equivalent path is:
+```
 C:\Users\<your-username>\.google_workspace_mcp\credentials\
+```
 Verify this folder exists and contains files after completing auth:
 powershellls C:\Users\liang\.google_workspace_mcp\credentials\
 You should see at minimum oauth_states.json and a token file for your account.
 
-Where the Agent Loop Runs
-The agent loop — SupervisorAgent, SpecialistAgent, workspace-mcp subprocess
+### Where the Agent Loop Runs
+The agent loop — `SupervisorAgent`, `SpecialistAgent`, `workspace-mcp` subprocess
 — runs inside the container. When Docker starts your container it runs a real
+
 Python process with uvicorn. That process imports gateway.app, which imports
 SupervisorAgent, which imports everything else.
+```
 Your machine (Windows)
 │
 ├── Docker container (running closed-claw image)
@@ -892,23 +916,28 @@ Your machine (Windows)
 │   │                                               └── uvx workspace-mcp (subprocess)
 │   │                                                         │
 │   │                                         reads/writes credentials from ──┐
-│   │                                                                          │
+│   │                                                                         │
 │   └── /root/.google_workspace_mcp/credentials/  ◄── volume mount
 │
 └── C:\Users\liang\.google_workspace_mcp\credentials\  (on your Windows machine)
+```
 
-Prerequisites
+### Prerequisites
 Install Docker Desktop from https://www.docker.com/products/docker-desktop and
 start it. The whale icon in the Windows taskbar system tray confirms it is running.
+
 Confirm Docker is working:
-powershelldocker version
+```powershell
+docker version
+```
 Expected: both Client: and Server: sections print version numbers. If Server:
 is missing, Docker Desktop is still starting — wait 30–60 seconds and retry.
 
-The Dockerfile
+### The Dockerfile
 Create this file at the root of your project (same level as main.py and
 requirements.txt):
-dockerfileFROM python:3.12-slim
+```dockerfile
+FROM python:3.12-slim
 
 # curl is useful for testing health check from inside the container
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -932,21 +961,26 @@ EXPOSE 10000
 
 # PORT env var lets the host override the port without rebuilding
 CMD ["sh", "-c", "uvicorn gateway.app:app --host 0.0.0.0 --port ${PORT:-10000}"]
-Why WORKDIR /app? This sets the working directory inside the container. When
+```
+
+Why `WORKDIR /app`? This sets the working directory inside the container. When
 uvicorn starts, Python's module resolution starts from /app. Since your code is
 copied to /app, imports like from agents.supervisor import SupervisorAgent
 resolve correctly.
-Why --host 0.0.0.0? By default uvicorn binds to 127.0.0.1 (loopback only).
+
+Why `--host 0.0.0.0`? By default uvicorn binds to `127.0.0.1` (loopback only).
 Inside Docker, that means "inside the container" — your host machine cannot reach
 it. 0.0.0.0 accepts connections on all interfaces, allowing Docker's port
 mapping to work.
+
 Why COPY requirements.txt before COPY . .? Docker builds in layers and caches
 each one. If you copy requirements.txt separately, Docker only re-runs
 pip install when requirements.txt actually changes. A code-only change skips
 that layer entirely — rebuilds take seconds instead of minutes.
 
-The .dockerignore
+### The .dockerignore
 Create this file at the root of your project:
+```
 .env
 .env.*
 __pycache__/
@@ -961,32 +995,38 @@ logs/
 *.log
 *.db
 tests/
+```
 Why .env is excluded: your secrets (API keys, tokens) must never be baked into
 the image. They are passed at runtime via docker-compose.yml.
-Why data/ and logs/ are excluded: these contain runtime-generated files
+
+Why `data/` and `logs/` are excluded: these contain runtime-generated files
 (SQLite database, log files) that have no place in the image.
 Why memory/ is NOT excluded: memory/agents/ and memory/brain/ contain
 persona and instruction files that are part of your application code. They belong
 in the image.
 
-Getting requirements.txt
-powershellpip freeze > requirements.txt
+#### Getting requirements.txt
+```powershell
+pip freeze > requirements.txt
+```
 
-WARNING — Windows only: In requirements.txt, pywin32 must have a
-platform guard or the Docker build will fail. Find the line and change it to:
-pywin32==311; sys_platform == 'win32'
-This tells pip to skip pywin32 on Linux (inside Docker) while keeping it
-on Windows for local development.
+>[!WARNING] — Windows only: In requirements.txt, pywin32 must have a
+>platform guard or the Docker build will fail. Find the line and change it to:
+>pywin32==311; sys_platform == 'win32'
+> This tells pip to skip pywin32 on Linux (inside Docker) while keeping it
+> on Windows for local development.
 
 
-The docker-compose.yml
-docker-compose.yml replaces all manual docker build and docker run commands.
+### The docker-compose.yml
+`docker-compose.yml` replaces all manual docker build and docker run commands.
 It defines the image, container name, restart policy, ports, environment, and
 volume mounts in one file. You run it once and Docker handles everything from
 that point forward — including auto-starting the container when Docker Desktop
 starts after a PC restart.
+
 Create this file at the root of your project:
-yamlservices:
+```yaml
+services:
   closed-claw:
     build: .
     container_name: closed-claw-dev
@@ -996,137 +1036,202 @@ yamlservices:
       - "10000:10000"
     volumes:
       - C:/Users/liang/.google_workspace_mcp/credentials:/root/.google_workspace_mcp/credentials
-
+```
 Replace liang with your actual Windows username.
 
 Key fields explained:
-build: . — builds the image from the Dockerfile in the current directory.
+- build: . — builds the image from the Dockerfile in the current directory.
 No separate docker build command needed.
-container_name: closed-claw-dev — gives the container a fixed name so you can
+- container_name: closed-claw-dev — gives the container a fixed name so you can
 reference it in logs and exec commands.
-restart: unless-stopped — Docker automatically restarts the container if it
+- restart: unless-stopped — Docker automatically restarts the container if it
 crashes or if Docker Desktop restarts after a PC reboot. You never need to
 manually start it again after the first run.
-env_file: .env — injects all variables from .env into the container at
-runtime. Secrets are never baked into the image.
-ports: "10000:10000" — maps port 10000 on your Windows machine to port 10000
+- env_file: .env — injects all variables from .env into the container at
+- runtime. Secrets are never baked into the image.
+- ports: "10000:10000" — maps port 10000 on your Windows machine to port 10000
 inside the container. http://localhost:10000/docs reaches uvicorn inside Docker.
-volumes — mounts the workspace-mcp credential folder from your Windows
+- volumes — mounts the workspace-mcp credential folder from your Windows
 machine into the container at the exact path workspace-mcp expects. The
 container reads and writes tokens here. Because it is a bind mount (not :ro),
 workspace-mcp can write refreshed tokens back to disk — required for the OAuth
 token refresh to work correctly.
 
-First-Time Google OAuth Inside Docker
-workspace-mcp runs its own OAuth server on port 8000 inside the container. The
+### First-Time Google OAuth Inside Docker
+`workspace-mcp` runs its own OAuth server on port 8000 inside the container. The
 first time it tries to access Google Tasks, Calendar, or Gmail, it starts this
 server and generates an authorization URL.
+
 To complete the OAuth flow from inside Docker, you need to temporarily expose port
 8000 so the Google callback can reach the container. Do this once only:
-Step A — Add port 8000 temporarily to docker-compose.yml:
-yamlports:
+
+#### Step A — Add port 8000 temporarily to docker-compose.yml:
+```yaml
+ports:
   - "10000:10000"
   - "8000:8000"
-Step B — Start the container:
-powershelldocker compose up -d
-Step C — Trigger a Google tool call by sending any message that uses Tasks,
+```
+
+#### Step B — Start the container:
+```powershell
+docker compose up -d
+```
+
+#### Step C — Trigger a Google tool call by sending any message that uses Tasks,
 Calendar, or Gmail. Check the logs:
-powershelldocker compose logs -f
+```powershell
+docker compose logs -f
+```
+
 You will see an authorization URL printed in the logs:
 Authorization URL: https://accounts.google.com/o/oauth2/auth?...&redirect_uri=http://localhost:8000/oauth2callback&...
-Step D — Copy that full URL and open it in your browser. Log in with your
-Google account and approve all permissions.
-Step E — Google redirects to http://localhost:8000/oauth2callback. Because
+
+#### Step D — Copy that full URL and open it in your browser. L
+Log in with your Google account and approve all permissions.
+
+#### Step E — Google redirects to http://localhost:8000/oauth2callback. Because
 port 8000 is exposed, this reaches the container. workspace-mcp exchanges the
 code for a token and saves it to the mounted volume at:
+```
 C:\Users\liang\.google_workspace_mcp\credentials\
-Step F — Verify the token was saved on your Windows machine:
-powershellls C:\Users\liang\.google_workspace_mcp\credentials\
+```
+
+#### Step F — Verify the token was saved on your Windows machine:
+```powershell
+ls C:\Users\liang\.google_workspace_mcp\credentials\
+```
 You should see a token file for your Google account.
-Step G — Remove the temporary port 8000 exposure from docker-compose.yml.
+
+#### Step G — Remove the temporary port 8000 exposure from docker-compose.yml.
 Your final docker-compose.yml should only expose port 10000:
-yamlports:
+```yaml
+ports:
   - "10000:10000"
-Restart to apply:
-powershelldocker compose down
+ ``` 
+
+### Restart to apply:
+```powershell
+docker compose down
 docker compose up -d
+```
 From this point on, workspace-mcp reads the saved token on every request and
 refreshes it automatically. You never need to re-authenticate unless you revoke
 access in your Google account settings.
 
-Starting and Managing the Container
+### Starting and Managing the Container
 First time (or after any code change):
-powershelldocker compose up -d --build
+```powershell
+docker compose up -d --build
+```
 This builds the image and starts the container in one command. The -d flag runs
 it in the background. Your terminal is free immediately.
+
 Every subsequent start (no code change):
-powershelldocker compose up -d
+```powershell
+docker compose up -d
+```
 After a PC restart with Docker Desktop set to auto-start, the container starts
 automatically — you do not need to run any command at all.
+
 Follow logs:
-powershelldocker compose logs -f
-Stop the container:
+- powershelldocker compose logs -f
+- Stop the container:
 powershelldocker compose down
-After code changes — rebuild and restart:
-powershelldocker compose up -d --build
+- After code changes — rebuild and restart:
+```powershell
+docker compose up -d --build
+```
 Docker only rebuilds layers that changed. A code-only change (no requirements.txt
 change) takes under 30 seconds.
 
-What to Expect When the Container Starts
+### What to Expect When the Container Starts
+```
 gateway | started | user=local_user | email=your@gmail.com | allowed_chat_id=123456789
 INFO:     Started server process [1]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:10000 (Press CTRL+C to quit)
+```
 If you see RuntimeError about missing env vars, check .env — one of
 USER_GOOGLE_EMAIL, WEBHOOK_SECRET, or TELEGRAM_CHAT_ID is missing.
 
-Verifying the Container in Docker Desktop
+### Verifying the Container in Docker Desktop
 Open Docker Desktop → Containers. You will see closed-claw-dev listed with
 a green dot (running). Click the container name to see live logs, environment
 variables, and resource usage. The stop/restart buttons are in the Actions column.
+
 Open Docker Desktop → Images. You will see closed-claw listed with its size
 and creation time.
 
-Useful Commands Reference
-CommandPurposedocker compose up -d --buildBuild image and start containerdocker compose up -dStart container (no rebuild)docker compose downStop and remove containerdocker compose logs -fFollow live logsdocker psList running containersdocker ps -aList all containers including stoppeddocker imagesList all imagesdocker system pruneClean up stopped containers and dangling images
+### Useful Commands Reference
+| Command | Purpose |
+| :--- | :--- | 
+| docker compose up -d --build | Build image and start container | 
+| docker compose up -d | Start container (no rebuild) | 
+| docker compose down | Stop and remove container | 
+| docker compose logs -f | Follow live logs | 
+| docker ps | List running containers | 
+| docker ps -a | List all containers including stopped | 
+| docker imagesList | all images | 
+| docker system prune | Clean up stopped containers and dangling images |
 
-Phase 3 Implementation Steps (replaces Steps 16–18 in Section 17)
-Step 14 — Confirm Docker Desktop is running
+## Phase 3 Implementation Steps (replaces Steps 16–18 in Section 17)
+
+### Step 14 — Confirm Docker Desktop is running
 Open Docker Desktop from the Start menu if not already open. Wait for the whale
 icon in the taskbar to stop animating.
 powershelldocker version
 Expected: both Client: and Server: sections print version numbers.
-Step 15 — Stop the Phase 2 uvicorn process
-powershell# In the terminal where uvicorn is running:
+
+### Step 15 — Stop the Phase 2 uvicorn process
+```powershell
+# In the terminal where uvicorn is running:
 Ctrl+C
+```
 Also stop the Phase 2 ngrok session (pointing to port 8000). You will start a new
 one pointing to port 10000 in Step 21.
-Step 16 — Create Dockerfile, .dockerignore, and docker-compose.yml
+
+### Step 16 — Create Dockerfile, .dockerignore, and docker-compose.yml
 Create all three files at the project root exactly as shown in this section.
+
 Verify they exist:
-powershellls Dockerfile
+```powershell
+ls Dockerfile
 ls .dockerignore
 ls docker-compose.yml
-Step 17 — Build the image and start the container
-powershelldocker compose up -d --build
-Watch the build output. All steps should complete successfully. The final lines
-should read:
+```
+
+### Step 17 — Build the image and start the container
+```powershell
+docker compose up -d --build
+```
+Watch the build output. All steps should complete successfully. 
+The final lines should read:
+```
 => => naming to docker.io/library/closed-claw_closed-claw
 ✔ Container closed-claw-dev  Started
+```
+
 Open Docker Desktop → Images. You should see closed-claw listed.
 Open Docker Desktop → Containers. You should see closed-claw-dev running (green dot).
+
 If the build fails at the pip install step, check requirements.txt — most
 likely pywin32 is missing the sys_platform == 'win32' guard. Fix it and rerun.
 Step 18 — Complete first-time Google OAuth
 Follow the First-Time Google OAuth Inside Docker steps in this section above.
+
 Done when: ls C:\Users\liang\.google_workspace_mcp\credentials\ shows a token
 file and port 8000 has been removed from docker-compose.yml.
-Step 19 — Verify health check
-powershellcurl http://localhost:10000/health
+
+### Step 19 — Verify health check
+```powershell
+curl http://localhost:10000/health
+```
 Expected: {"status":"ok"}
-Step 20 — Test agent loop with fake webhook into Docker
-powershell$SECRET  = $env:WEBHOOK_SECRET
+
+### Step 20 — Test agent loop with fake webhook into Docker
+```powershell
+$SECRET  = $env:WEBHOOK_SECRET
 $CHAT_ID = [int]$env:TELEGRAM_CHAT_ID
 
 $body = @{
@@ -1143,28 +1248,44 @@ Invoke-WebRequest -Uri "http://localhost:10000/webhook/$SECRET" `
     -Method POST `
     -ContentType "application/json" `
     -Body $body
-Expected:
+```    
 
+Expected:
+```
 Response body: {"ok":true}
+```
 Container logs show the supervisor ran and a response was generated
 You may receive an actual Telegram message — this is expected
 
-Step 21 — Start new ngrok tunnel on port 10000
-powershellngrok http 10000
+### Step 21 — Start new ngrok tunnel on port 10000
+```powershell
+ngrok http 10000
+```
 Copy the new https:// forwarding URL.
-Step 22 — Re-register the Telegram webhook
+
+### Step 22 — Re-register the Telegram webhook
 Update register_webhook.ps1 with the new ngrok URL (port 10000) and run it:
-powershell.\register_webhook.ps1
+```powershell
+.\register_webhook.ps1
+```
 Expected: {"ok": true, "result": true, "description": "Webhook was set"}
+
 Verify:
-powershell$TOKEN = $env:TELEGRAM_BOT_TOKEN
+```powershell
+$TOKEN = $env:TELEGRAM_BOT_TOKEN
 Invoke-WebRequest -Uri "https://api.telegram.org/bot$TOKEN/getWebhookInfo" |
     Select-Object -ExpandProperty Content
+```
+
 Confirm the "url" field ends with /webhook/<your-secret> and uses the new
 ngrok URL.
-Step 23 — Smoke test: real Telegram messages through Docker
-Send the same messages from Step 13. Check docker compose logs -f after each.
+
+### Step 23 — Smoke test: real Telegram messages through Docker
+Send the same messages from Step 13. 
+
+Check docker compose logs -f after each.
 MessageExpected behaviourWhat can you help me with?Reply in Telegram, no tool call in logsAdd a task called Review report due this FridayTask + calendar event in Google, confirmation in TelegramSend an email to your@gmail.com subject Stage 2 Docker test body Running in DockerEmail delivered, confirmation in Telegram/startAssistant ready. Send me a message.
+
 Phase 3 complete when: All four messages produce the correct behaviour, with
 logs confirming the agent loop ran inside the Docker container.
 
