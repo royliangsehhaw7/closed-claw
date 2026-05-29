@@ -13,7 +13,6 @@ __pycache__/
 #
 .env
 .dockerignore
-docs/
 credentials/
 tests/
 node_modules/
