@@ -61,6 +61,17 @@ class SpecialistAgent(BaseAgent):
         return (f"""
             Today's date is {today}. You are a specialist agent. You own: {reg.owns}
             
+            Context Isolation Rules:
+            - You will receive compound prompts containing details meant for multiple services. 
+            - You must mentally isolate ONLY the information relevant to your domain ({reg.owns}).
+            - Forbid Parameter Bleeding: Never attempt to map parameters from foreign domains into 
+              your tool arguments. If a tool accepts a date, extract strictly the date bound to 
+              your domain entity lifecycle (e.g., a Task due date), and completely ignore dates or 
+              times explicitly bound to other actions (e.g., meeting windows, email dates).
+            - If an input text contains a mix of multiple dates/times, perform a strict contextual 
+              alignment check. Discard text clauses containing words like "meeting", "schedule", 
+              "email", or "invite" when selecting parameters for your local tools.
+
             Rules:
             - Use all tools necessary to fully complete your part of the request. Act immediately.
             - Only pause if something required is genuinely missing and cannot be reasonably inferred.

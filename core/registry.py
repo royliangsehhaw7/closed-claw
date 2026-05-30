@@ -1,104 +1,85 @@
 from __future__ import annotations
 
-import importlib
+from pathlib import Path
 from dataclasses import dataclass, field
+from typing import List, Dict
+import yaml
 
+from core.logger import logger
 
-@dataclass(frozen=True)
+@dataclass
 class AgentRegistration:
-    """Metadata for one specialist agent.
-
-    description  — shown verbatim in the Supervisor's system prompt.
-                   Write it as a capability statement: what this agent
-                   can do, phrased so an LLM can match it to a user request.
-    services     — MCP service names passed to google_workspace_server().
-                   For non-Google MCP servers, wire the server inside
-                   agent_class instead and leave this empty.
-    owns         — one-line summary of what this specialist handles.
-                   Injected into the specialist's system prompt.
-    agent_class  — dotted import path to a hand-written agent class.
-                   None means use SpecialistAgent (the common case).
-                   Set this only when custom logic is required.
-    """
-    description: str
-    services: list[str] = field(default_factory=list)
+    """The clean interface layer consumed directly by specialist.py and supervisor.py."""
+    key: str
+    name: str
+    services: List[str] = field(default_factory=list)
     owns: str = ""
-    agent_class: str | None = None
+    description: str = ""
 
 
-# ── Registry ──────────────────────────────────────────────────────────────────
-#
-# Keys are the specialist_keys the Supervisor passes to delegate_to_specialists.
-# Each key must match exactly one AgentRegistration.
-#
-# To add a new MCP-based agent:
-#   1. Add one entry here. Done.
-#
-# To add an agent with custom logic:
-#   1. Create agents/<name>_agent.py extending BaseAgent.
-#   2. Add one entry here with agent_class="agents.<name>_agent.<ClassName>".
-#
-AGENT_REGISTRY: dict[str, AgentRegistration] = {
-    "tasks": AgentRegistration(
-        description=(
-            "Google Tasks — list pending tasks, create tasks, mark tasks complete, "
-            "update due dates. Use for any request about the user's task list."
-        ),
-        services=["tasks"],
-        owns="Google Tasks — task creation, listing, completion, due date updates.",
-    ),
-    "calendar": AgentRegistration(
-        description=(
-            "Google Calendar — list upcoming events, create calendar events, "
-            "check availability. Use whenever a request involves dates, times, "
-            "deadlines, or scheduling. Always include when creating a task with "
-            "a due date."
-        ),
-        services=["calendar"],
-        owns="Google Calendar — event creation, listing, availability checks.",
-    ),
-    "email": AgentRegistration(
-        description=(
-            "Gmail — send emails, read inbox, search messages. Use for any "
-            "request that involves sending or reading email."
-        ),
-        services=["gmail"],
-        owns="Gmail — sending email, reading inbox, searching messages.",
-    ),
-}
+# Pure, decoupled memory mapping
+AGENT_REGISTRY: Dict[str, AgentRegistration] = {}
+
+
+def load_registry_from_disk(skills_dir: str = "skills") -> None:
+    """Explicitly clears and re-reads all SKILLS.md file targets from disk."""
+    global AGENT_REGISTRY
+    AGENT_REGISTRY.clear()
+
+    skills_path = Path(skills_dir)
+    if not skills_path.exists():
+        logger.warning("registry | target directory not found: %s", skills_dir)
+        return
+
+    for file_path in skills_path.glob("**/SKILL.md"):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            if not content.startswith("---"):
+                continue
+
+            parts = content.split("---", 2)
+            if len(parts) < 3:
+                continue
+
+            meta = yaml.safe_load(parts[1]) or {}
+            key = meta.get("key")
+            name = meta.get("name")
+
+            if not key or not name:
+                continue
+
+            AGENT_REGISTRY[key] = AgentRegistration(
+                key=key,
+                name=name,
+                services=meta.get("services", []),
+                owns=meta.get("owns", ""),
+                description=meta.get("description", "")
+            )
+            logger.info("registry | compiled skill configuration target: %s", key)
+
+        except Exception as e:
+            logger.error("registry | structural parse failure at %s | error=%s", file_path, e)
 
 
 def build_registry_prompt() -> str:
-    """Return a formatted string describing all registered specialists.
+    """Compiles the dynamic layout string for injection into the supervisor prompt string."""
+    if not AGENT_REGISTRY:
+        return "Available Specialists:\n- None configured."
 
-    Injected into the Supervisor's system prompt at startup. When a new
-    entry is added to AGENT_REGISTRY, it automatically appears here.
-    """
-    lines = ["Available specialists (use specialist_keys to select):"]
+    lines = ["Available Specialists:"]
     for key, reg in AGENT_REGISTRY.items():
-        lines.append(f'  "{key}": {reg.description}')
-        
+        lines.append(f"- [{key}]: {reg.name} -> {reg.description} (Owns: {reg.owns})")
     return "\n".join(lines)
 
 
-def build_specialist(key: str, user_email: str) -> object:
-    """Instantiate the right agent for the given registry key.
-
-    If the registration has agent_class set, that class is imported and
-    instantiated with user_email. Otherwise SpecialistAgent is used.
-
-    This is the only place in the codebase that decides which class to use.
-    The Supervisor and delegation tool never import agent classes directly.
-    """
-    reg = AGENT_REGISTRY[key]
-
-    if reg.agent_class is not None:
-        # Hand-written class — import and instantiate
-        module_path, class_name = reg.agent_class.rsplit(".", 1)
-        module = importlib.import_module(module_path)
-        cls = getattr(module, class_name)
-        return cls(user_email)
-
-    # Generic case — build SpecialistAgent from registry entry
+def build_specialist(key: str, user_email: str):
+    """Instantiates a stable SpecialistAgent using clean dependency injection."""
     from agents.specialist import SpecialistAgent
-    return SpecialistAgent(key=key, registration=reg, user_email=user_email)
+
+    registration = AGENT_REGISTRY.get(key)
+    if not registration:
+        raise ValueError(f"Specialist agent '{key}' is missing from runtime registry.")
+
+    return SpecialistAgent(key=key, registration=registration, user_email=user_email)
