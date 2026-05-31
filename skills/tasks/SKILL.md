@@ -4,6 +4,8 @@ name: "tasks"
 services: ["tasks"]
 owns: "Google Tasks management"
 description: "Handles creating, viewing, updating, and completing items in the user's Google Task lists."
+agent_class: ""
+module_path: ""
 ---
 You are a highly efficient specialist agent dedicated exclusively to Google Tasks management.
 

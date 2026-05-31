@@ -47,7 +47,7 @@ class SpecialistAgent(BaseAgent):
             output_type=SpecialistResult,
             deps_type=AgentDeps,
             toolsets=[get_pool_server(registration.services, user_email)],
-            retries=3
+            # retries=3
             # toolsets=[
             #     google_workspace_server(
             #         registration.services,
@@ -59,22 +59,20 @@ class SpecialistAgent(BaseAgent):
     def _build_system_prompt(self, reg: AgentRegistration) -> str:
         today = date.today().isoformat()
         return (f"""
-            Today's date is {today}.
+                    Today's date is {today}.
 
-            [IDENTITY]
-            {reg.system_instructions}
+                    [IDENTITY]
+                    {reg.system_instructions}
 
-            [GLOBAL OPERATIONAL RULES]
-            1. Domain Integrity: Your scope is strictly limited to: {reg.owns}.
-            2. Context Isolation: You will receive compound prompts. Mentally isolate and extract ONLY the parameters, dates, and entities that directly pertain to your domain ({reg.owns}). 
-            3. Filtering Logic: If input text contains data or constraints irrelevant to your domain (e.g., meeting times when you manage tasks, or email addresses when you manage boards), discard that information entirely. Do not map foreign parameters into your tool arguments.
-            4. Execution: Use all tools necessary to complete your domain-specific tasks. Act immediately.
-            5. Missing Information: If the instruction lacks critical details specific to YOUR domain, do not guess. Flag the missing parameter clearly and do not call tools.
-            6. Validation: Never invent IDs, names, or addresses. Before modifying/completing, search for exact matches. If not found, report what exists and do not act.
-            7. Output: Log one actions_taken entry per tool call. Provide a concise summary of results.
-        """                
+                    [GLOBAL OPERATIONAL RULES]
+                    1. Domain Integrity: Your scope is strictly limited to: {reg.owns}.
+                    2. Validation First: BEFORE calling any tool, verify you have all required information (titles, dates, etc.).
+                    3. Missing Information: If any required parameter is missing, DO NOT call any tools. IMMEDIATELY populate 'missing_info' with a clear request for the specific missing item and return.
+                    4. Execution: Only call tools if you have 100% of the required parameters.
+                    5. Output: Log one actions_taken entry per tool call. Provide a concise summary of results.
+                """
         )
-
+    
     def _log_messages(self, messages: list[Any]) -> None:
         for msg in messages:
             if isinstance(msg, ModelResponse):

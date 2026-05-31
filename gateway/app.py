@@ -22,6 +22,13 @@ from schemas.turn_record import TurnRecord
 #
 
 
+import sys
+
+# This will print the exact path of the file being executed
+print(f"!!! STARTING_PROCESS_FROM: {os.getcwd()} !!!")
+print(f"!!! EXECUTING_FILE: {__file__} !!!")
+print(f"!!! PYTHON_PATH: {sys.executable} !!!")
+
 # ── application state ─────────────────────────────────────────────────────────
  
 _supervisor: SupervisorAgent

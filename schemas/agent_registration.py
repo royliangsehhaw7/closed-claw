@@ -13,3 +13,7 @@ class AgentRegistration:
 
     # This will hold everything below the metadata '---'
     system_instructions: str = ""
+
+    # Defaults allow older SKILL.md files to load without crashing
+    agent_class: str = "SpecialistAgent"
+    module_path: str = "agents.specialist"    

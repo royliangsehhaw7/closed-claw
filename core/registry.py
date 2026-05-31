@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import yaml
+import importlib
 from pathlib import Path
 from typing import Dict
 from dataclasses import dataclass
+from agents.protocol import SpecialistProtocol
 
 from core.logger import logger
 from schemas.agent_registration import AgentRegistration
@@ -58,14 +60,23 @@ class AgentRegistry:
                 if not key or not name:
                     continue
 
+                # Get values, defaulting to standard agents if missing/empty
+                raw_module = meta.get("module_path")
+                module_path = raw_module if (raw_module and raw_module.strip()) else "agents.specialist"
+
+                raw_class = meta.get("agent_class")
+                agent_class = raw_class if (raw_class and raw_class.strip()) else "SpecialistAgent"
+
                 self._agents[key] = AgentRegistration(
                     key=key,
                     name=name,
                     services=meta.get("services", []),
                     owns=meta.get("owns", ""),
                     description=meta.get("description", ""),
-                    system_instructions=parts[2].strip()
-                )
+                    system_instructions=parts[2].strip(),
+                    agent_class=agent_class,
+                    module_path=module_path
+)               
                 logger.info("registry | compiled skill configuration target: %s", key)
 
             except Exception as e:
@@ -89,16 +100,37 @@ class AgentRegistry:
             lines.append(f"- [{key}]: {reg.name} -> {reg.description} (Owns: {reg.owns})")
         return "\n".join(lines)
 
-    def build_specialist(self, key: str, user_email: str):
-        """Instantiates a stable SpecialistAgent using clean dependency injection."""
-        from agents.specialist import SpecialistAgent
-
+    def build_specialist(self, key: str, user_email: str) -> SpecialistProtocol:
         registration = self.get(key)
         if not registration:
-            raise ValueError(f"Specialist agent '{key}' is missing from runtime registry.")
+            raise ValueError(f"Agent '{key}' missing.")
 
-        return SpecialistAgent(key=key, registration=registration, user_email=user_email)
+        # 1. Dynamic Import
+        module = importlib.import_module(registration.module_path)
+        agent_cls = getattr(module, registration.agent_class)
+        
+        # 2. Every agent is guaranteed to accept these two arguments
+        # If an agent doesn't need user_email, it simply ignores it in __init__
+        return agent_cls(key=key,registration=registration, user_email=user_email)
 
+    # # core/registry.py
 
-# # Export a single, explicit instance of the registry (Python's version of a Singleton)
-# agent_registry = AgentRegistry()
+    # def build_specialist(self, key: str, user_email: str) -> SpecialistProtocol:
+    #         registration = self.get(key)
+    #         if not registration:
+    #             raise ValueError(f"Agent '{key}' missing.")
+
+    #         # 1. Dynamic Import
+    #         module = importlib.import_module(registration.module_path)
+    #         agent_cls = getattr(module, registration.agent_class)
+            
+    #         # --- FIX: ADD YOUR AGENT TO THIS LIST ---
+    #         # If your agent ONLY takes 'registration' in __init__, add it here.
+    #         registration_only_agents = {"RemindersAgent", "PersonalNoteAgent"}
+            
+    #         if registration.agent_class in registration_only_agents:
+    #             # This instantiates it correctly without the extra arguments
+    #             return agent_cls(registration=registration)
+            
+    #         # Default behavior for standard MCP agents (SpecialistAgent)
+    #         return agent_cls(key=key, registration=registration, user_email=user_email)

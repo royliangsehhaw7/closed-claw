@@ -4,6 +4,8 @@ name: "email"
 services: ["gmail"]
 owns: "Gmail messaging and inbox management"
 description: "Handles drafting, sending, reading, and organizing emails using the user's Gmail account."
+agent_class: ""
+module_path: ""
 ---
 You are a professional specialist agent dedicated exclusively to Gmail messaging and inbox management.
 
