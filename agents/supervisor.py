@@ -7,10 +7,12 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 
 from agents.base import BaseAgent
+
 from core.deps import AgentDeps
 from core.llm_factory import LLMFactory
 from core.logger import logger
-from core.registry import AGENT_REGISTRY, load_registry_from_disk, build_registry_prompt, build_specialist
+from core.registry import AgentRegistry
+
 from schemas.specialist_result import SpecialistResult
 from schemas.supervisor_response import SupervisorResponse
 
@@ -37,7 +39,9 @@ class SupervisorAgent(BaseAgent):
         super().__init__(name="supervisor")
 
         # EXPLICIT STEP: Re-scan the skills directory straight from disk on initialization
-        load_registry_from_disk(skills_dir="skills")
+        self._registry = AgentRegistry()
+
+        self._registry.load_from_disk(skills_dir="skills")
 
         # Retained your precise framework keywords: output_type and deps_type
         self.agent = Agent(
@@ -52,7 +56,7 @@ class SupervisorAgent(BaseAgent):
 
     def _build_system_prompt(self) -> str:
         """Dynamically pulls the instructions straight out of the loaded registry map."""
-        registry_manifest = build_registry_prompt()
+        registry_manifest = self._registry.build_prompt()
         
         return f"""
             You are the entry point for all user requests.
@@ -82,14 +86,14 @@ class SupervisorAgent(BaseAgent):
         results: list[SpecialistResult] = []
 
         for key, sub_task in zip(specialist_keys, sub_tasks):
-            if key not in AGENT_REGISTRY:
+            if not self._registry.has_specialist(key):
                 logger.error("SupervisorAgent | validation failed | unknown specialist key: %s", key)
                 continue
 
             logger.warning("SupervisorAgent | delegating control | specialist=%s | task=%r", key, sub_task)
             
             # Build the specialist instance explicitly using the verified registry row
-            specialist = build_specialist(key, ctx.deps.user_email)
+            specialist = self._registry.build_specialist(key, ctx.deps.user_email)
             
             # Direct execution pass down to the target specialist loop
             res = await specialist.run(sub_task, deps=ctx.deps)

@@ -74,8 +74,7 @@ This means:
 
 ### How the Registry Works
 
-`core/registry.py` is pure data — a module-level dict of `AgentRegistration`
-dataclasses, populated by scanning `skills/` at supervisor construction time.
+The `AgentRegistry` is a singleton-style class instance. It manages the lifecycle of agent definitions internally. The SupervisorAgent owns an instance of the registry, which it populates at construction time. Rather than global access, components interact with the registry instance via defined methods.
 
 `SupervisorAgent.__init__()` calls `load_registry_from_disk()` which clears and
 repopulates `AGENT_REGISTRY` from disk. The registry is not passed around — it
@@ -88,31 +87,50 @@ at request time, not at startup.
 ### How a Request Flows
 
 ```
-Telegram message
-    │
-    ▼
-FastAPI webhook handler
-    │   returns 200 immediately
-    ▼
-_process() [background task, serialised by _agent_lock]
-    │
-    ▼
-SupervisorAgent.run(text, deps)
-    │
-    ├── agent decides: direct answer or delegate?
-    │
-    └── delegate_to_specialists(keys, sub_tasks)
+## 2. Request Flow & System Architecture
+
+The following diagram illustrates the encapsulated lifecycle of a request. The SupervisorAgent acts as the orchestrator, owning an instance of the AgentRegistry, which functions as a factory to construct specialists on-demand with their specific identities.
+
++-------------------------------------------------------------+
+| Telegram Message                                            |
++-------------------------------------------------------------+
               │
-              ├── validates key against AGENT_REGISTRY
-              ├── build_specialist(key, user_email) → SpecialistAgent
-              └── specialist.run(sub_task, deps)
-                        │
-                        └── get_pool_server(services, user_email)
-                                  │   returns cached MCPServerStdio
-                                  ▼
-                              pydantic-ai Agent.run()
-                                  └── workspace-mcp tools
-                                        └── Google Tasks / Calendar / Gmail
+              ▼
++-------------------------------------------------------------+
+| FastAPI Webhook Handler (Returns 200 immediately)           |
++-------------------------------------------------------------+
+              │ (Background Task)
+              ▼
++-------------------------------------------------------------+
+| SupervisorAgent (Instance Lifecycle)                        |
+|   ├── holds self._registry: AgentRegistry (Singleton Class) |
++-------------------------------------------------------------+
+│    │
+│    ├── [Orchestration] Decision: Direct Answer OR Delegate?
+│    │
+│    └── [Delegation] self._registry.build_specialist(key)
+│              │
+│              └── [Factory: AgentRegistry instance validates key]
+│                   │
+│                   └── [Identity Injection]:
+│                        - Parses SKILL.md (YAML + Instructions)
+│                        - Construct: SpecialistAgent(registration)
+│                        - Injects identity into system prompt
+│              │
+│              ▼
+│    +--------------------------------------------------------+
+│    | SpecialistAgent (Operational Domain)                   |
+│    +--------------------------------------------------------+
+│                   │
+│                   └── specialist.run(sub_task)
+│                           │
+│                           └── get_pool_server(services)
+│                                   │
+│                                   ▼
+│                          pydantic-ai Agent.run()
+│                                   │
+│                                   └── Workspace MCP Tools
++-------------------------------------------------------------+
 ```
 
 ---
@@ -203,115 +221,104 @@ Pure data. No agent construction at scan time. No MCP references. No async.
 ```python
 from __future__ import annotations
 
-from pathlib import Path
-from dataclasses import dataclass, field
-from typing import List, Dict
 import yaml
+from pathlib import Path
+from typing import Dict
+from dataclasses import dataclass
 
 from core.logger import logger
+from schemas.agent_registration import AgentRegistration
 
+class AgentRegistry:
+    """Encapsulates the state and logic for available specialist agents."""
+    
+    # def __init__(self):
+    #     self._agents: Dict[str, AgentRegistration] = {}
+    
+    # =============== S I N G L E T O N ==============#
+    # 1. Hold the single private instance at the class level
+    # 1. Declare the type at the class level (like a C# property)
+    _instance: AgentRegistry | None = None
+    _agents: Dict[str, AgentRegistration]
 
-@dataclass
-class AgentRegistration:
-    """The clean interface layer consumed directly by specialist.py and supervisor.py."""
-    key: str
-    name: str
-    services: List[str] = field(default_factory=list)
-    owns: str = ""
-    description: str = ""
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(AgentRegistry, cls).__new__(cls)
+            
+            # 2. Assign the value WITHOUT the inline type hint
+            cls._instance._agents = {}
+            
+        return cls._instance
+    
 
+    def load_from_disk(self, skills_dir: str = "skills") -> None:
+        """Clears and re-reads all SKILLS.md file targets from disk."""
+        self._agents.clear()
 
-# Pure, decoupled memory mapping — module-level global
-AGENT_REGISTRY: Dict[str, AgentRegistration] = {}
+        skills_path = Path(skills_dir)
+        if not skills_path.exists():
+            logger.warning("registry | target directory not found: %s", skills_dir)
+            return
 
+        for file_path in skills_path.glob("**/SKILL.md"):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
 
-def load_registry_from_disk(skills_dir: str = "skills") -> None:
-    """Clear and re-read all SKILL.md files from disk.
+                if not content.startswith("---"):
+                    continue
 
-    Called once in SupervisorAgent.__init__(). Populates AGENT_REGISTRY.
-    A malformed or missing file is logged and skipped — startup does not crash.
-    """
-    global AGENT_REGISTRY
-    AGENT_REGISTRY.clear()
+                parts = content.split("---", 2)
+                if len(parts) < 3:
+                    continue
 
-    skills_path = Path(skills_dir)
-    if not skills_path.exists():
-        logger.warning("registry | target directory not found: %s", skills_dir)
-        return
+                meta = yaml.safe_load(parts[1]) or {}
+                key = meta.get("key")
+                name = meta.get("name")
 
-    for file_path in skills_path.glob("**/SKILL.md"):
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read()
+                if not key or not name:
+                    continue
 
-            if not content.startswith("---"):
-                continue
+                self._agents[key] = AgentRegistration(
+                    key=key,
+                    name=name,
+                    services=meta.get("services", []),
+                    owns=meta.get("owns", ""),
+                    description=meta.get("description", ""),
+                    system_instructions=parts[2].strip()
+                )
+                logger.info("registry | compiled skill configuration target: %s", key)
 
-            parts = content.split("---", 2)
-            if len(parts) < 3:
-                continue
+            except Exception as e:
+                logger.error("registry | structural parse failure at %s | error=%s", file_path, e)
 
-            meta = yaml.safe_load(parts[1]) or {}
-            key = meta.get("key")
-            name = meta.get("name")
+    def get(self, key: str) -> AgentRegistration | None:
+        """Safely retrieves an agent registration by key."""
+        return self._agents.get(key)
 
-            if not key or not name:
-                continue
+    def has_specialist(self, key: str) -> bool:
+        """Checks if a specialist exists in the registry."""
+        return key in self._agents
 
-            AGENT_REGISTRY[key] = AgentRegistration(
-                key=key,
-                name=name,
-                services=meta.get("services", []),
-                owns=meta.get("owns", ""),
-                description=meta.get("description", "")
-            )
-            logger.info("registry | compiled skill configuration target: %s", key)
+    def build_prompt(self) -> str:
+        """Compiles the dynamic layout string for injection into the supervisor prompt."""
+        if not self._agents:
+            return "Available Specialists:\n- None configured."
 
-        except Exception as e:
-            logger.error("registry | structural parse failure at %s | error=%s", file_path, e)
+        lines = ["Available Specialists:"]
+        for key, reg in self._agents.items():
+            lines.append(f"- [{key}]: {reg.name} -> {reg.description} (Owns: {reg.owns})")
+        return "\n".join(lines)
 
+    def build_specialist(self, key: str, user_email: str):
+        """Instantiates a stable SpecialistAgent using clean dependency injection."""
+        from agents.specialist import SpecialistAgent
 
-def build_registry_prompt() -> str:
-    """Compile the specialist listing for injection into the supervisor system prompt."""
-    if not AGENT_REGISTRY:
-        return "Available Specialists:\n- None configured."
+        registration = self.get(key)
+        if not registration:
+            raise ValueError(f"Specialist agent '{key}' is missing from runtime registry.")
 
-    lines = ["Available Specialists:"]
-    for key, reg in AGENT_REGISTRY.items():
-        lines.append(f"- [{key}]: {reg.name} -> {reg.description} (Owns: {reg.owns})")
-    return "\n".join(lines)
-
-
-def build_specialist(key: str, user_email: str):
-    """Instantiate a SpecialistAgent on demand from the registry entry.
-
-    Called at request time inside SupervisorAgent.delegate_to_specialists().
-    Not called at startup — agents are not pre-constructed.
-
-    Raises ValueError if the key is not in AGENT_REGISTRY.
-    """
-    from agents.specialist import SpecialistAgent
-
-    registration = AGENT_REGISTRY.get(key)
-    if not registration:
-        raise ValueError(f"Specialist agent '{key}' is missing from runtime registry.")
-
-    return SpecialistAgent(key=key, registration=registration, user_email=user_email)
-```
-
-**Why a module-level global?** The registry is process-scoped state. It is
-populated once at startup and read-only thereafter. Making it a global avoids
-threading it through every call site. The supervisor, specialist factory, and
-any future component that needs to inspect available agents all import from the
-same module.
-
-**Why `glob("**/SKILL.md")`?** Recursive scan finds skills regardless of nesting
-depth. A flat `skills/<key>/SKILL.md` layout is the convention, but a skill with
-supporting assets in subdirectories still works. The `key` field in frontmatter
-is the identifier — directory name is irrelevant.
-
-**Adding a new MCP agent: create `skills/<key>/SKILL.md`, restart. That is all.**
-
+        return SpecialistAgent(key=key, registration=registration, user_email=user_email)
 ---
 
 ## 5. `mcps/mcp_pool.py` — Full Implementation
@@ -374,6 +381,8 @@ from core.deps import AgentDeps
 from core.llm_factory import LLMFactory
 from core.logger import logger
 from core.registry import AgentRegistration
+
+from mcps.google import google_workspace_server
 from mcps.mcp_pool import get_pool_server
 from schemas.specialist_result import SpecialistResult
 
@@ -384,13 +393,16 @@ class SpecialistAgent(BaseAgent):
     """
     Generic specialist agent constructed from a registry entry.
 
-    The registration supplies everything needed:
+    The registry entry supplies everything needed to build a functioning agent:
     - services   → which MCP tools to load (narrow tool surface)
     - owns       → injected into system prompt so the LLM knows its domain
-    - description → used for logging
 
-    Adding a new MCP agent requires no subclass. Drop a SKILL.md into skills/,
-    restart, and the registry constructs a SpecialistAgent from the file.
+    This class never changes when new agents are added. Only the registry
+    entry and (if needed) the MCP server wiring change.
+
+    For agents that require custom logic — non-MCP tools, multi-step workflows,
+    unusual error handling — write a dedicated class and set agent_class in the
+    registry entry. This class handles the common case.
     """
 
     def __init__(self, key: str, registration: AgentRegistration, user_email: str) -> None:
@@ -404,36 +416,33 @@ class SpecialistAgent(BaseAgent):
             output_type=SpecialistResult,
             deps_type=AgentDeps,
             toolsets=[get_pool_server(registration.services, user_email)],
-            retries=3,
+            retries=3
+            # toolsets=[
+            #     google_workspace_server(
+            #         registration.services,
+            #         user_email=user_email,
+            #     ),
+            # ],
         )
 
     def _build_system_prompt(self, reg: AgentRegistration) -> str:
         today = date.today().isoformat()
-        return f"""
-            Today's date is {today}. You are a specialist agent. You own: {reg.owns}
+        return (f"""
+            Today's date is {today}.
 
-            Context Isolation Rules:
-            - You will receive compound prompts containing details meant for multiple services.
-            - You must mentally isolate ONLY the information relevant to your domain ({reg.owns}).
-            - Forbid Parameter Bleeding: Never attempt to map parameters from foreign domains into
-              your tool arguments. If a tool accepts a date, extract strictly the date bound to
-              your domain entity lifecycle (e.g., a Task due date), and completely ignore dates or
-              times explicitly bound to other actions (e.g., meeting windows, email dates).
-            - If an input text contains a mix of multiple dates/times, perform a strict contextual
-              alignment check. Discard text clauses containing words like "meeting", "schedule",
-              "email", or "invite" when selecting parameters for your local tools.
+            [IDENTITY]
+            {reg.system_instructions}
 
-            Rules:
-            - Use all tools necessary to fully complete your part of the request. Act immediately.
-            - Only pause if something required is genuinely missing and cannot be reasonably inferred.
-              If so, set missing_info exactly and do not call any tools.
-            - Log one actions_taken entry per tool call: include titles, dates, recipients.
-            - Never invent IDs, names, or addresses. If a lookup returns nothing, say so in summary.
-            - Before modifying, completing, or deleting any item, search all available
-              containers first. Never assume where an item lives.
-            - Match by exact name. If no exact match found, report what exists and do not act.
-            - Ignore everything outside your domain — another specialist handles it.
-        """
+            [GLOBAL OPERATIONAL RULES]
+            1. Domain Integrity: Your scope is strictly limited to: {reg.owns}.
+            2. Context Isolation: You will receive compound prompts. Mentally isolate and extract ONLY the parameters, dates, and entities that directly pertain to your domain ({reg.owns}). 
+            3. Filtering Logic: If input text contains data or constraints irrelevant to your domain (e.g., meeting times when you manage tasks, or email addresses when you manage boards), discard that information entirely. Do not map foreign parameters into your tool arguments.
+            4. Execution: Use all tools necessary to complete your domain-specific tasks. Act immediately.
+            5. Missing Information: If the instruction lacks critical details specific to YOUR domain, do not guess. Flag the missing parameter clearly and do not call tools.
+            6. Validation: Never invent IDs, names, or addresses. Before modifying/completing, search for exact matches. If not found, report what exists and do not act.
+            7. Output: Log one actions_taken entry per tool call. Provide a concise summary of results.
+        """                
+        )
 
     def _log_messages(self, messages: list[Any]) -> None:
         for msg in messages:
@@ -458,6 +467,7 @@ class SpecialistAgent(BaseAgent):
             self._key, deps.user_id, self._user_email, sub_task,
         )
 
+        # async with self._agent: # DONT USE THIS ANYWORE, GETTING FROM POOL
         result = await self._agent.run(
             user_prompt=sub_task,
             deps=deps,
@@ -499,10 +509,12 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 
 from agents.base import BaseAgent
+
 from core.deps import AgentDeps
 from core.llm_factory import LLMFactory
 from core.logger import logger
-from core.registry import AGENT_REGISTRY, load_registry_from_disk, build_registry_prompt, build_specialist
+from core.registry import AgentRegistry
+
 from schemas.specialist_result import SpecialistResult
 from schemas.supervisor_response import SupervisorResponse
 
@@ -513,10 +525,13 @@ class SupervisorAgent(BaseAgent):
     """
     Entry point for all user requests.
 
-    Reads the registry at construction time via load_registry_from_disk().
-    Its system prompt reflects exactly what SKILL.md files are present on disk.
-    Adding a new skill file and restarting is sufficient to make the supervisor
-    aware of the new specialist — no code changes here.
+    Makes two decisions:
+    1. Does this request require tool use, or can it be answered directly?
+    2. If tool use is needed, which specialists should handle it?
+
+    The Supervisor reads the registry at startup. Its system prompt always reflects exactly what 
+    specialists are available. Adding a new specialist to the registry is immediately visible 
+    to the Supervisor — no code changes here.
 
     Never resolves user identity — AgentDeps arrives fully populated.
     Never calls MCP tools directly — that is the specialists' job.
@@ -525,9 +540,12 @@ class SupervisorAgent(BaseAgent):
     def __init__(self) -> None:
         super().__init__(name="supervisor")
 
-        # Scan skills/ directory and populate AGENT_REGISTRY
-        load_registry_from_disk(skills_dir="skills")
+        # EXPLICIT STEP: Re-scan the skills directory straight from disk on initialization
+        self._registry = AgentRegistry()
 
+        self._registry.load_from_disk(skills_dir="skills")
+
+        # Retained your precise framework keywords: output_type and deps_type
         self.agent = Agent(
             model=_factory.get_model(os.getenv("SUPERVISOR_MODEL")),
             system_prompt=self._build_system_prompt(),
@@ -535,11 +553,13 @@ class SupervisorAgent(BaseAgent):
             deps_type=AgentDeps,
         )
 
+        # Register the delegation tool explicitly
         self.agent.tool(self.delegate_to_specialists)
 
     def _build_system_prompt(self) -> str:
-        registry_manifest = build_registry_prompt()
-
+        """Dynamically pulls the instructions straight out of the loaded registry map."""
+        registry_manifest = self._registry.build_prompt()
+        
         return f"""
             You are the entry point for all user requests.
             Your system prompt always reflects exactly what specialists are available on disk.
@@ -555,35 +575,44 @@ class SupervisorAgent(BaseAgent):
     async def run(self, user_prompt: str, deps: AgentDeps) -> SupervisorResponse:
         logger.warning("SupervisorAgent.run | user=%s | prompt=%r", deps.user_id, user_prompt)
         result = await self.agent.run(user_prompt, deps=deps)
+
         return result.output
 
     async def delegate_to_specialists(
-        self,
-        ctx: RunContext[AgentDeps],
-        specialist_keys: list[str],
+        self, 
+        ctx: RunContext[AgentDeps], 
+        specialist_keys: list[str], 
         sub_tasks: list[str]
     ) -> str:
-        """Execute sequential handoffs to verified disk specialists."""
+        """Executes sequential handoffs to the dynamically verified disk specialists."""
         results: list[SpecialistResult] = []
 
         for key, sub_task in zip(specialist_keys, sub_tasks):
-            if key not in AGENT_REGISTRY:
-                logger.error(
-                    "SupervisorAgent | validation failed | unknown specialist key: %s", key
-                )
+            if not self._registry.has_specialist(key):
+                logger.error("SupervisorAgent | validation failed | unknown specialist key: %s", key)
                 continue
 
-            logger.warning(
-                "SupervisorAgent | delegating | specialist=%s | task=%r", key, sub_task
-            )
-
-            specialist = build_specialist(key, ctx.deps.user_email)
+            logger.warning("SupervisorAgent | delegating control | specialist=%s | task=%r", key, sub_task)
+            
+            # Build the specialist instance explicitly using the verified registry row
+            specialist = self._registry.build_specialist(key, ctx.deps.user_email)
+            
+            # Direct execution pass down to the target specialist loop
             res = await specialist.run(sub_task, deps=ctx.deps)
             results.append(res)
 
         return self._format_specialist_results(results)
 
     def _format_specialist_results(self, results: list[SpecialistResult]) -> str:
+        """
+        The Supervisor's LLM receives this string as the tool return value.
+        It uses the merged summary to compose the final user-facing message.
+
+        Format:
+        - Single result: return summary + actions directly.
+        - Multiple results: prefix each block with the specialist index so the
+          Supervisor can tell which actions came from which specialist.
+        """
         if not results:
             return "No specialists returned results."
 
@@ -596,6 +625,7 @@ class SupervisorAgent(BaseAgent):
                 parts.append(f"Missing info: {r.missing_info}")
             return "\n".join(parts)
 
+        # Multiple specialists — label each block cleanly
         blocks = []
         for i, r in enumerate(results, start=1):
             lines = [f"[Specialist {i}] Summary: {r.summary}"]
@@ -850,34 +880,21 @@ extend `AgentRegistration` with a `instructions` field and populate it in
 `load_registry_from_disk()`:
 
 ```python
+from dataclasses import dataclass, field
+from typing import List
+
+
 @dataclass
 class AgentRegistration:
+    """The clean interface layer consumed directly by specialist.py and supervisor.py."""
     key: str
     name: str
     services: List[str] = field(default_factory=list)
     owns: str = ""
     description: str = ""
-    instructions: str = ""      # NEW — full markdown body from SKILL.md
-```
 
-In `load_registry_from_disk()`, after parsing the frontmatter, capture the body:
-
-```python
-parts = content.split("---", 2)
-# parts[0] = "" (before first ---)
-# parts[1] = yaml block
-# parts[2] = markdown body
-
-instructions = parts[2].strip() if len(parts) == 3 else ""
-
-AGENT_REGISTRY[key] = AgentRegistration(
-    key=key,
-    name=name,
-    services=meta.get("services", []),
-    owns=meta.get("owns", ""),
-    description=meta.get("description", ""),
-    instructions=instructions,
-)
+    # This will hold everything below the metadata '---'
+    system_instructions: str = ""
 ```
 
 Both `SpecialistAgent._build_system_prompt()` and `RemindersAgent._build_system_prompt()`
@@ -903,37 +920,40 @@ def _build_system_prompt(self, reg: AgentRegistration) -> str:
 project/
 ├── agents/
 │   ├── base.py
-│   ├── reminders.py          NEW
-│   ├── reminders_tools.py    NEW  (tool functions separated for testability)
-│   ├── specialist.py         UPDATED
-│   └── supervisor.py         UPDATED
+│   ├── reminders.py            NEW
+│   ├── reminders_tools.py    
+│   ├── specialist.py           UPDATED
+│   └── supervisor.py           UPDATED
 ├── core/
 │   ├── deps.py
 │   ├── llm_factory.py
 │   ├── logger.py
-│   └── registry.py           REWRITTEN
+│   └── registry.py             REWRITTEN
 ├── gateway/
-│   ├── app.py                unchanged from Stage 2
+│   ├── app.py                  unchanged from Stage 2
 │   └── telegram_client.py
 ├── mcps/
 │   ├── google.py
-│   └── mcp_pool.py           UPDATED
+│   └── mcp_pool.py             UPDATED
 ├── memory/
-│   ├── sqlite_store.py       UPDATED (reminders DDL added)
+│   ├── sqlite_store.py         UPDATED (reminders DDL added)
 │   └── ...
 ├── schemas/
 │   ├── specialist_result.py
 │   ├── supervisor_response.py
-│   └── turn_record.py
+│   ├── turn_record.py
+│   └── agent_registration.py
 ├── skills/
 │   ├── calendar/
-│   │   └── SKILL.md          NEW
+│   │   └── SKILL.md            NEW
 │   ├── email/
-│   │   └── SKILL.md          NEW
+│   │   └── SKILL.md            NEW
 │   ├── reminders/
-│   │   └── SKILL.md          NEW
+│   │   └── SKILL.md            NEW
 │   └── tasks/
-│       └── SKILL.md          NEW
+│       └── SKILL.md            NEW
+├── tools/
+│   └── reminder_tools.py       NEW  (tool functions separated for testability)
 ├── main.py
 └── .env
 ```
@@ -944,11 +964,9 @@ project/
 
 ### Phase 1 — Registry and skill files
 
-1. Extend `AgentRegistration` with `instructions: str = ""`.
-2. Rewrite `core/registry.py` from Section 4 exactly, including the body capture from Section 10.
-3. Create the `skills/` directory.
-4. Write all four `SKILL.md` files from Section 3.
-5. Smoke test: start the app, confirm all four agents appear in startup logs.
+1. Create the `skills/` directory.
+2. Write all four `SKILL.md` files from Section 3.
+3. Smoke test: start the app, confirm all four agents appear in startup logs.
 
 ### Phase 2 — Reminder agent
 

@@ -59,30 +59,20 @@ class SpecialistAgent(BaseAgent):
     def _build_system_prompt(self, reg: AgentRegistration) -> str:
         today = date.today().isoformat()
         return (f"""
-            Today's date is {today}. You are a specialist agent. You own: {reg.owns}
-            
-            Context Isolation Rules:
-            - You will receive compound prompts containing details meant for multiple services. 
-            - You must mentally isolate ONLY the information relevant to your domain ({reg.owns}).
-            - Forbid Parameter Bleeding: Never attempt to map parameters from foreign domains into 
-              your tool arguments. If a tool accepts a date, extract strictly the date bound to 
-              your domain entity lifecycle (e.g., a Task due date), and completely ignore dates or 
-              times explicitly bound to other actions (e.g., meeting windows, email dates).
-            - If an input text contains a mix of multiple dates/times, perform a strict contextual 
-              alignment check. Discard text clauses containing words like "meeting", "schedule", 
-              "email", or "invite" when selecting parameters for your local tools.
+            Today's date is {today}.
 
-            Rules:
-            - Use all tools necessary to fully complete your part of the request. Act immediately.
-            - Only pause if something required is genuinely missing and cannot be reasonably inferred.
-              If so, set missing_info exactly and do not call any tools.
-            - Log one actions_taken entry per tool call: include titles, dates, recipients.
-            - Never invent IDs, names, or addresses. If a lookup returns nothing, say so in summary.
-            - Before modifying, completing, or deleting any item, search all available 
-              containers first. Never assume where an item lives.
-            - Match by exact name. If no exact match found, report what exists and do not act.            
-            - Ignore everything outside your domain — another specialist handles it.        
-        """
+            [IDENTITY]
+            {reg.system_instructions}
+
+            [GLOBAL OPERATIONAL RULES]
+            1. Domain Integrity: Your scope is strictly limited to: {reg.owns}.
+            2. Context Isolation: You will receive compound prompts. Mentally isolate and extract ONLY the parameters, dates, and entities that directly pertain to your domain ({reg.owns}). 
+            3. Filtering Logic: If input text contains data or constraints irrelevant to your domain (e.g., meeting times when you manage tasks, or email addresses when you manage boards), discard that information entirely. Do not map foreign parameters into your tool arguments.
+            4. Execution: Use all tools necessary to complete your domain-specific tasks. Act immediately.
+            5. Missing Information: If the instruction lacks critical details specific to YOUR domain, do not guess. Flag the missing parameter clearly and do not call tools.
+            6. Validation: Never invent IDs, names, or addresses. Before modifying/completing, search for exact matches. If not found, report what exists and do not act.
+            7. Output: Log one actions_taken entry per tool call. Provide a concise summary of results.
+        """                
         )
 
     def _log_messages(self, messages: list[Any]) -> None:
