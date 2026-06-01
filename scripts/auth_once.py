@@ -2,7 +2,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from dotenv import load_dotenv
 import json, os
 
-
 load_dotenv()
 
 SCOPES = [
@@ -11,8 +10,9 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.send",
 ]
 
-EMAIL = os.environ["USER_GOOGLE_EMAIL"]  # e.g. you@gmail.com
-CRED_DIR = os.path.join(os.environ["APPDATA"], "workspace-mcp", "credentials")
+# EMAIL = os.environ["USER_GOOGLE_EMAIL"]  # e.g. you@gmail.com
+EMAIL = "royliangsehhaw@gmail.com"  # e.g. you@gmail.com
+CRED_DIR = os.path.join(r"C:\users\liang", ".google_workspace_mcp", "credentials")
 
 flow = InstalledAppFlow.from_client_config(
     {
