@@ -1,9 +1,9 @@
 ---
 key: "personal_notes"
-name: "personalnotes"
-services: []
-owns: "Simple personal scratchpad"
-description: "Saves raw text notes to a local SQLite database."
+name: "personal_notes"
+owns: "Simple personal scratchpad and local file storage"
+description: "Saves raw text notes directly to a local file on disk."
+server_type: "none"
 agent_class: "PersonalNoteAgent"
 module_path: "agents.personal_notes"
 ---
