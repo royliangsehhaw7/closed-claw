@@ -35,6 +35,9 @@ _supervisor: SupervisorAgent
 _store: SQLiteStore
 _agent_lock = asyncio.Lock()
 
+_message_history: list = []           # Telegram webhook path
+_assistant_history: list = []  
+
 
 # ── environment ───────────────────────────────────────────────────────────────
 
@@ -143,21 +146,22 @@ async def get_raw_body(request: Request):
 # ── assistant ────────────────────────────────────────────────────────────────────
 @app.post("/assistant/id/{chat_id}/msg/{chat}")
 async def assistant(chat_id: int, chat: str) -> dict:
+    global _assistant_history
     deps = AgentDeps(
         user_id=_USER_ID,
         user_email=_USER_EMAIL,
     )
-
-    # # 6. Run agent loop synchronously — Stage 3 moves this to a Redis queue
     try:
-        response = await _supervisor.run(chat, deps)
+        response, _assistant_history = await _supervisor.run(
+            chat,
+            deps=deps,
+            message_history=_assistant_history,
+        )
     except Exception:
         logger.exception("webhook | agent loop failed | chat_id=%d", chat_id)
-        await send_message(chat_id, "Something went wrong. Please try again.")
         return {"ok": True}
 
-    # 7. Reply
-    return {'message': response.message}
+    return {"message": response.message}
 
 
 
@@ -217,32 +221,26 @@ async def webhook(
  
  
 async def _process(chat_id: int, text: str) -> None:
-    """Process a message after 200 has already been returned to Telegram.
- 
-    Protected by _agent_lock so only one agent run executes at a time.
-    Rapid messages or any startup flush queue here and run in order rather
-    than racing for the same MCP connection.
-    """
+    global _message_history
     async with _agent_lock:
- 
-        # 6. Build deps — identity resolved here, never inside agents
         deps = AgentDeps(
             user_id=_USER_ID,
             user_email=_USER_EMAIL,
         )
- 
-        # 7. Run agent loop — Stage 3 moves this to a Redis queue
+
         try:
-            response = await _supervisor.run(text, deps)
+            response, _message_history = await _supervisor.run(
+                text,
+                deps=deps,
+                message_history=_message_history,
+            )
         except Exception:
             logger.exception("webhook | agent loop failed | chat_id=%d", chat_id)
             await send_message(chat_id, "Something went wrong. Please try again.")
             return
- 
-        # 8. Reply
+
         await send_message(chat_id, response.message)
- 
-        # 9. Write turn record
+
         record = TurnRecord(
             turn_id=str(uuid.uuid4()),
             user_id=_USER_ID,

@@ -104,18 +104,26 @@ class SupervisorAgent(BaseAgent):
             returned by the specialist.            
         """
 
-    async def run(self, user_prompt: str, deps: AgentDeps) -> SupervisorResponse:
+
+    async def run(
+            self, 
+            user_prompt: str, 
+            deps: AgentDeps,
+            message_history: list | None = None
+        ) -> tuple[SupervisorResponse, list]:
+        
         logger.warning("SupervisorAgent.run | user=%s | prompt=%r", deps.user_id, user_prompt)
         result = await self.agent.run(user_prompt, deps=deps)
 
-        return result.output
+        return result.output, result.all_messages()
+
 
     async def delegate_to_specialists(
         self, 
         ctx: RunContext[AgentDeps], 
         specialist_keys: list[str], 
         sub_tasks: list[str]
-    ) -> str:
+    ) -> list[SpecialistResult]:
         """Executes sequential handoffs to the dynamically verified disk specialists."""
         results: list[SpecialistResult] = []
 
@@ -135,36 +143,4 @@ class SupervisorAgent(BaseAgent):
             results.append(res)
 
         logger.warning(f"DEBUG: Final results list count: {len(results)}")
-        return self._format_specialist_results(results)
-
-    def _format_specialist_results(self, results: list[SpecialistResult]) -> str:
-        """
-        The Supervisor's LLM receives this string as the tool return value.
-        It uses the merged summary to compose the final user-facing message.
-
-        Format:
-        - Single result: return summary + actions directly.
-        - Multiple results: prefix each block with the specialist index so the
-          Supervisor can tell which actions came from which specialist.
-        """
-        if not results:
-            return "No specialists returned results."
-
-        if len(results) == 1:
-            r = results[0]
-            parts = [f"Summary: {r.summary}"]
-            if r.actions_taken:
-                parts.append("Actions taken:\n" + "\n".join(f"  - {a}" for a in r.actions_taken))
-            if r.missing_info:
-                parts.append(f"Missing info: {r.missing_info}")
-            return "\n".join(parts)
-
-        # Multiple specialists — label each block cleanly
-        blocks = []
-        for i, r in enumerate(results, start=1):
-            lines = [f"[Specialist {i}] Summary: {r.summary}"]
-            if r.actions_taken:
-                lines.append("Actions:\n" + "\n".join(f"  - {a}" for a in r.actions_taken))
-            blocks.append("\n".join(lines))
-
-        return "\n\n".join(blocks)
+        return results
