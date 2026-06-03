@@ -24,8 +24,7 @@ class AgentRegistry:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(AgentRegistry, cls).__new__(cls)
-            
+            cls._instance = super(AgentRegistry, cls).__new__(cls)            
             # 2. Assign the value WITHOUT the inline type hint
             cls._instance._agents = {}
             
@@ -54,6 +53,12 @@ class AgentRegistry:
                     continue
 
                 meta = yaml.safe_load(parts[1]) or {}
+                # --- NEW: Skip if explicitly marked as not available ---
+                if meta.get("available", True) is False:
+                    logger.debug("registry | skipping unavailable skill at %s", file_path)
+                    continue
+
+
                 key = meta.get("key")
                 name = meta.get("name")
 
@@ -75,8 +80,10 @@ class AgentRegistry:
                     description=meta.get("description", ""),
                     system_instructions=parts[2].strip(),
                     agent_class=agent_class,
-                    module_path=module_path
-)               
+                    module_path=module_path,
+                    server_type=meta.get("server_type", "google"),
+                    available=meta.get("available", False)
+                )               
                 logger.info("registry | compiled skill configuration target: %s", key)
 
             except Exception as e:

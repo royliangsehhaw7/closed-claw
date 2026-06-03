@@ -5,6 +5,7 @@ owns: "Trello board, list, and card management"
 description: "Handles creating, viewing, updating, and moving cards across Trello boards and lists."
 server_type: "stdio"
 services: ["trello"]
+available: False
 ---
 You are a Trello specialist. You manage boards, lists, and cards.
 

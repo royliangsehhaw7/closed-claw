@@ -11985,3 +11985,645 @@ Traceback (most recent call last):
 2026-06-03 09:37:13,379 [INFO] app | registry | compiled skill configuration target: trello
 2026-06-03 09:37:13,797 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
 2026-06-03 09:38:36,791 [INFO] app | gateway | shutdown
+2026-06-03 11:46:37,816 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 11:46:38,545 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 11:47:20,210 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='note "1111111111"'
+2026-06-03 11:59:50,946 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:01:37,645 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:02:22,590 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='note "123"'
+2026-06-03 12:02:44,267 [WARNING] app | SupervisorAgent reply: message="I'm sorry, but I don't have the capability to access or interact with notes or specific documents. If you have any other questions or need assistance with something else, feel free to ask! I'm here to help." requires_followup=False
+2026-06-03 12:08:54,916 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:10:13,120 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:12:00,037 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:15:05,166 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:16:18,077 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:17:09,357 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:17:38,421 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:20:01,396 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='note "123123456456"'
+2026-06-03 12:20:28,780 [WARNING] app | SupervisorAgent | delegating control | specialist=personal_notes | task="Create a note with the content '123123456456'"
+2026-06-03 12:20:28,793 [ERROR] app | webhook | agent loop failed | chat_id=1
+Traceback (most recent call last):
+  File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\gateway\app.py"[0m, line [35m155[0m, in [35massistant[0m
+    response, _assistant_history = [1;31mawait _supervisor.run([0m
+                                   [1;31m^^^^^^^^^^^^^^^^^^^^^^[0m
+    ...<3 lines>...
+    [1;31m)[0m
+    [1;31m^[0m
+  File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\agents\supervisor.py"[0m, line [35m116[0m, in [35mrun[0m
+    result = [1;31mawait self.agent.run([0m
+             [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+    ...<3 lines>...
+    [1;31m)[0m
+    [1;31m^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\abstract.py"[0m, line [35m444[0m, in [35mrun[0m
+    node = [1;31mawait agent_run.next(node)[0m  # pyright: ignore[reportArgumentType]
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m404[0m, in [35mnext[0m
+    return [1;31mawait self._run_node_with_hooks(node, self._advance_graph)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m328[0m, in [35m_run_node_with_hooks[0m
+    return [1;31mawait self._wrap_and_advance(run_context, node, step_fn)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m298[0m, in [35m_wrap_and_advance[0m
+    result = [1;31mawait cap.on_node_run_error(run_context, node=node, error=e)[0m
+             [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m256[0m, in [35mon_node_run_error[0m
+    raise error
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m253[0m, in [35mon_node_run_error[0m
+    return [1;31mawait capability.on_node_run_error(ctx, node=node, error=error)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m477[0m, in [35mon_node_run_error[0m
+    raise error
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m253[0m, in [35mon_node_run_error[0m
+    return [1;31mawait capability.on_node_run_error(ctx, node=node, error=error)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m477[0m, in [35mon_node_run_error[0m
+    raise error
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m296[0m, in [35m_wrap_and_advance[0m
+    result = [1;31mawait cap.wrap_node_run(run_context, node=node, handler=step_fn)[0m
+             [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m242[0m, in [35mwrap_node_run[0m
+    return [1;31mawait chain(node)[0m
+           [1;31m^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m628[0m, in [35mwrapped[0m
+    return [1;31mawait cap.wrap_node_run(ctx, node=node, handler=inner)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m456[0m, in [35mwrap_node_run[0m
+    return [1;31mawait handler(node)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m628[0m, in [35mwrapped[0m
+    return [1;31mawait cap.wrap_node_run(ctx, node=node, handler=inner)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m456[0m, in [35mwrap_node_run[0m
+    return [1;31mawait handler(node)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m274[0m, in [35m_advance_graph[0m
+    task = [1;31mawait self._graph_run.next(task)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m557[0m, in [35mnext[0m
+    return [1;31mawait anext(self)[0m
+           [1;31m^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m534[0m, in [35m__anext__[0m
+    raise self._next.error
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m844[0m, in [35m_run_tracked_task[0m
+    result = [1;31mawait self._run_task(t_)[0m
+             [1;31m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m886[0m, in [35m_run_task[0m
+    output = [1;31mawait node.call(step_context)[0m
+             [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\step.py"[0m, line [35m253[0m, in [35m_call_node[0m
+    return [1;31mawait node.run(GraphRunContext(state=ctx.state, deps=ctx.deps))[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1061[0m, in [35mrun[0m
+    async with [31mself.stream[0m[1;31m(ctx)[0m:
+               [31m~~~~~~~~~~~[0m[1;31m^^^^^[0m
+  File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m221[0m, in [35m__aexit__[0m
+    await anext(self.gen)
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1081[0m, in [35mstream[0m
+    async for _event in stream:
+        pass
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1245[0m, in [35m_run_stream[0m
+    async for event in self._events_iterator:
+        yield event
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1208[0m, in [35m_run_stream[0m
+    async for event in self._handle_tool_calls(ctx, tool_calls):
+        yield event
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1269[0m, in [35m_handle_tool_calls[0m
+    async for event in process_tool_calls(
+    ...<9 lines>...
+        yield event
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1692[0m, in [35mprocess_tool_calls[0m
+    async for event in _call_tools(
+    ...<8 lines>...
+        yield event
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1900[0m, in [35m_call_tools[0m
+    if event := [1;31mawait handle_call_or_result(coro_or_task=task, index=index)[0m:  # pyright: ignore[reportArgumentType]
+                [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1843[0m, in [35mhandle_call_or_result[0m
+    ([1;31mawait coro_or_task[0m) if inspect.isawaitable(coro_or_task) else coro_or_task.result()
+     [1;31m^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1956[0m, in [35m_call_tool[0m
+    tool_result = [1;31mawait tool_manager.execute_tool_call(validated)[0m
+                  [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m499[0m, in [35mexecute_tool_call[0m
+    return [1;31mawait self._execute_tool_call_impl([0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+        [1;31mvalidated, usage=self.ctx.usage, wrap_validation_errors=wrap_validation_errors[0m
+        [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    [1;31m)[0m
+    [1;31m^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m731[0m, in [35m_execute_tool_call_impl[0m
+    tool_result = [1;31mawait self._run_execute_hooks([0m
+                  [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+        [1;31mvalidated, usage=usage, wrap_validation_errors=wrap_validation_errors[0m
+        [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    [1;31m)[0m
+    [1;31m^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m335[0m, in [35m_run_execute_hooks[0m
+    tool_result = [1;31mawait cap.on_tool_execute_error(ctx, call=call, tool_def=tool_def, args=args, error=e)[0m
+                  [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m436[0m, in [35mon_tool_execute_error[0m
+    raise error
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m433[0m, in [35mon_tool_execute_error[0m
+    return [1;31mawait capability.on_tool_execute_error(ctx, call=call, tool_def=tool_def, args=args, error=error)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m700[0m, in [35mon_tool_execute_error[0m
+    raise error
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m433[0m, in [35mon_tool_execute_error[0m
+    return [1;31mawait capability.on_tool_execute_error(ctx, call=call, tool_def=tool_def, args=args, error=error)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m700[0m, in [35mon_tool_execute_error[0m
+    raise error
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m327[0m, in [35m_run_execute_hooks[0m
+    tool_result = [1;31mawait cap.wrap_tool_execute([0m
+                  [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+        [1;31mctx, call=call, tool_def=tool_def, args=args, handler=do_execute[0m
+        [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    [1;31m)[0m
+    [1;31m^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m420[0m, in [35mwrap_tool_execute[0m
+    return [1;31mawait chain(args)[0m
+           [1;31m^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m641[0m, in [35mwrapped[0m
+    return [1;31mawait cap.wrap_tool_execute(ctx, call=call, tool_def=tool_def, args=args, handler=inner)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m670[0m, in [35mwrap_tool_execute[0m
+    return [1;31mawait handler(args)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m641[0m, in [35mwrapped[0m
+    return [1;31mawait cap.wrap_tool_execute(ctx, call=call, tool_def=tool_def, args=args, handler=inner)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m670[0m, in [35mwrap_tool_execute[0m
+    return [1;31mawait handler(args)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m312[0m, in [35mdo_execute[0m
+    return [1;31mawait self._raw_execute([0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+        [1;31mmodified_validated, usage=usage, wrap_validation_errors=wrap_validation_errors[0m
+        [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    [1;31m)[0m
+    [1;31m^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m754[0m, in [35m_raw_execute[0m
+    tool_result = [1;31mawait self.toolset.call_tool([0m
+                  [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    ...<4 lines>...
+    [1;31m)[0m
+    [1;31m^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\combined.py"[0m, line [35m94[0m, in [35mcall_tool[0m
+    return [1;31mawait tool.source_toolset.call_tool(name, tool_args, ctx, tool.source_tool)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\_tool_search.py"[0m, line [35m377[0m, in [35mcall_tool[0m
+    return [1;31mawait self.wrapped.call_tool(name, tool_args, ctx, tool)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\wrapper.py"[0m, line [35m66[0m, in [35mcall_tool[0m
+    return [1;31mawait self.wrapped.call_tool(name, tool_args, ctx, tool)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\combined.py"[0m, line [35m94[0m, in [35mcall_tool[0m
+    return [1;31mawait tool.source_toolset.call_tool(name, tool_args, ctx, tool.source_tool)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\function.py"[0m, line [35m663[0m, in [35mcall_tool[0m
+    return [1;31mawait tool.call_func(tool_args, ctx)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"c:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_function_schema.py"[0m, line [35m84[0m, in [35mcall[0m
+    return [1;31mawait function(*args, **kwargs)[0m
+           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\agents\supervisor.py"[0m, line [35m143[0m, in [35mdelegate_to_specialists[0m
+    specialist = self._registry.build_specialist(key, ctx.deps.user_email)
+  File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\core\registry.py"[0m, line [35m116[0m, in [35mbuild_specialist[0m
+    module = importlib.import_module(registration.module_path)
+  File [35m"C:\Python313\Lib\importlib\__init__.py"[0m, line [35m88[0m, in [35mimport_module[0m
+    return [31m_bootstrap._gcd_import[0m[1;31m(name[level:], package, level)[0m
+           [31m~~~~~~~~~~~~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  File [35m"<frozen importlib._bootstrap>"[0m, line [35m1387[0m, in [35m_gcd_import[0m
+  File [35m"<frozen importlib._bootstrap>"[0m, line [35m1360[0m, in [35m_find_and_load[0m
+  File [35m"<frozen importlib._bootstrap>"[0m, line [35m1331[0m, in [35m_find_and_load_unlocked[0m
+  File [35m"<frozen importlib._bootstrap>"[0m, line [35m935[0m, in [35m_load_unlocked[0m
+  File [35m"<frozen importlib._bootstrap_external>"[0m, line [35m1026[0m, in [35mexec_module[0m
+  File [35m"<frozen importlib._bootstrap>"[0m, line [35m488[0m, in [35m_call_with_frames_removed[0m
+  File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\agents\personal_notes.py"[0m, line [35m6[0m, in [35m<module>[0m
+    from tools.personal_note_tools import save_as_txt
+[1;35mImportError[0m: [35mcannot import name 'save_as_txt' from 'tools.personal_note_tools' (C:\Development\python\pydantic-ai\multi-agent\closed-claw\tools\personal_note_tools.py)[0m
+2026-06-03 12:22:34,384 [INFO] app | gateway | shutdown
+2026-06-03 12:23:29,886 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:23:29,889 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:23:30,276 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:25:01,449 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='note "123123123"'
+2026-06-03 12:25:05,333 [WARNING] app | SupervisorAgent | delegating control | specialist=personal_notes | task='Create a new note with the content: 123123123'
+2026-06-03 12:25:09,885 [WARNING] app | SupervisorAgent reply: message='Your note has been saved to `personal_notes.txt` on your Desktop with 7 characters.' requires_followup=False
+2026-06-03 12:25:29,201 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:27:54,533 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:27:54,536 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:27:54,916 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:28:26,223 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:28:31,299 [WARNING] app | SupervisorAgent reply: message='I have no pending tasks at the moment. Is there anything I can assist you with?' requires_followup=False
+2026-06-03 12:34:06,862 [INFO] app | gateway | shutdown
+2026-06-03 12:34:18,337 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:34:18,341 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:34:18,867 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:34:40,240 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:37:06,476 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:37:06,479 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:37:06,863 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:37:23,842 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:42:33,186 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:42:33,189 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:42:33,568 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:42:49,842 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:46:48,915 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:46:48,919 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:46:49,300 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:47:09,259 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:47:10,913 [WARNING] app | SupervisorAgent reply: message='No pending tasks.' requires_followup=False
+2026-06-03 12:49:28,889 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:49:28,895 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:49:29,325 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:49:46,148 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:51:15,147 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 12:51:15,150 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 12:51:15,527 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 12:51:35,235 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 12:51:37,232 [WARNING] app | SupervisorAgent reply: message='I have no pending tasks at the moment. Is there anything I can assist you with?' requires_followup=False
+2026-06-03 12:51:52,497 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='what about any upcoming appointments this week?'
+2026-06-03 13:03:40,834 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 13:03:40,838 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 13:03:41,221 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 13:04:04,314 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any appointments this week?'
+2026-06-03 13:05:27,283 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 13:05:27,286 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 13:05:27,666 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 13:05:48,238 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 13:05:50,264 [WARNING] app | SupervisorAgent reply: message="I don't have access to a task management tool right now." requires_followup=False
+2026-06-03 13:11:19,660 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 13:11:19,663 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 13:11:20,047 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 13:11:32,495 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any appointments this week?'
+2026-06-03 13:11:32,495 [WARNING] app | SupervisorAgent.run | BEFORE agent.run
+2026-06-03 13:12:02,098 [WARNING] app | SupervisorAgent.run | AFTER agent.run
+2026-06-03 13:12:02,098 [WARNING] app | SupervisorAgent reply: message="I don't have access to a calendar tool right now. I can help you save personal notes, memos, and freeform text to local .txt files. Would you like to use that feature instead? If you have any other requests or need further assistance, feel free to let me know!" requires_followup=False
+2026-06-03 13:13:13,058 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any pending tasks?'
+2026-06-03 13:13:13,058 [WARNING] app | SupervisorAgent.run | BEFORE agent.run
+2026-06-03 13:13:35,971 [WARNING] app | SupervisorAgent.run | AFTER agent.run
+2026-06-03 13:13:35,971 [WARNING] app | SupervisorAgent reply: message="I don't have access to a task management tool right now. I can help you save personal notes, memos, and freeform text to local .txt files. Would you like to use that feature instead? If you have any other requests or need further assistance, feel free to let me know!" requires_followup=False
+2026-06-03 13:16:28,538 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='send an email to liangsehhaw@gmail to wish him Thank you for this birthday gift'
+2026-06-03 13:16:28,538 [WARNING] app | SupervisorAgent.run | BEFORE agent.run
+2026-06-03 13:16:39,686 [WARNING] app | SupervisorAgent.run | AFTER agent.run
+2026-06-03 13:16:39,686 [WARNING] app | SupervisorAgent reply: message="I'm unable to send emails directly. However, I can help you draft the email so you can send it easily from your email account. Would you like me to help you with that? If so, please provide the content you'd like to include in the email. If you need any other assistance, feel free to let me know!" requires_followup=False
+2026-06-03 13:17:07,314 [INFO] app | SQLiteStore.initialise | ready | path=data/assistant.db
+2026-06-03 13:17:07,325 [INFO] app | registry | compiled skill configuration target: calendar
+2026-06-03 13:17:07,329 [INFO] app | registry | compiled skill configuration target: personal_notes
+2026-06-03 13:17:07,702 [INFO] app | gateway | started | user=local_user | email=royliangsehhaw@gmail.com | allowed_chat_id=8649855646
+2026-06-03 13:18:21,717 [WARNING] app | SupervisorAgent.run | user=local_user | prompt='any appointments this week?'
+2026-06-03 13:18:21,724 [WARNING] app | SupervisorAgent.run | BEFORE agent.run
+2026-06-03 13:18:23,424 [WARNING] app | delegate_to_specialists | CALLED | keys=['calendar']
+2026-06-03 13:18:23,424 [WARNING] app | SupervisorAgent | delegating control | specialist=calendar | task='list events'
+2026-06-03 13:18:23,796 [WARNING] app | SpecialistAgent[calendar].run | user=local_user | email=royliangsehhaw@gmail.com | sub_task='list events'
+2026-06-03 13:18:24,235 [ERROR] app | webhook | agent loop failed | chat_id=1
+  + Exception Group Traceback (most recent call last):
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\gateway\app.py"[0m, line [35m155[0m, in [35massistant[0m
+  |     response, _assistant_history = [1;31mawait _supervisor.run([0m
+  |                                    [1;31m^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     ...<3 lines>...
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\agents\supervisor.py"[0m, line [35m83[0m, in [35mrun[0m
+  |     result = [1;31mawait self.agent.run([0m
+  |              [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+  |     ...<4 lines>...
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\abstract.py"[0m, line [35m444[0m, in [35mrun[0m
+  |     node = [1;31mawait agent_run.next(node)[0m  # pyright: ignore[reportArgumentType]
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m404[0m, in [35mnext[0m
+  |     return [1;31mawait self._run_node_with_hooks(node, self._advance_graph)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m328[0m, in [35m_run_node_with_hooks[0m
+  |     return [1;31mawait self._wrap_and_advance(run_context, node, step_fn)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m298[0m, in [35m_wrap_and_advance[0m
+  |     result = [1;31mawait cap.on_node_run_error(run_context, node=node, error=e)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m256[0m, in [35mon_node_run_error[0m
+  |     raise error
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m253[0m, in [35mon_node_run_error[0m
+  |     return [1;31mawait capability.on_node_run_error(ctx, node=node, error=error)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m477[0m, in [35mon_node_run_error[0m
+  |     raise error
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m253[0m, in [35mon_node_run_error[0m
+  |     return [1;31mawait capability.on_node_run_error(ctx, node=node, error=error)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m477[0m, in [35mon_node_run_error[0m
+  |     raise error
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m296[0m, in [35m_wrap_and_advance[0m
+  |     result = [1;31mawait cap.wrap_node_run(run_context, node=node, handler=step_fn)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m242[0m, in [35mwrap_node_run[0m
+  |     return [1;31mawait chain(node)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m628[0m, in [35mwrapped[0m
+  |     return [1;31mawait cap.wrap_node_run(ctx, node=node, handler=inner)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m456[0m, in [35mwrap_node_run[0m
+  |     return [1;31mawait handler(node)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m628[0m, in [35mwrapped[0m
+  |     return [1;31mawait cap.wrap_node_run(ctx, node=node, handler=inner)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m456[0m, in [35mwrap_node_run[0m
+  |     return [1;31mawait handler(node)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\run.py"[0m, line [35m274[0m, in [35m_advance_graph[0m
+  |     task = [1;31mawait self._graph_run.next(task)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m557[0m, in [35mnext[0m
+  |     return [1;31mawait anext(self)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m534[0m, in [35m__anext__[0m
+  |     raise self._next.error
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m844[0m, in [35m_run_tracked_task[0m
+  |     result = [1;31mawait self._run_task(t_)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\graph_builder.py"[0m, line [35m886[0m, in [35m_run_task[0m
+  |     output = [1;31mawait node.call(step_context)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_graph\step.py"[0m, line [35m253[0m, in [35m_call_node[0m
+  |     return [1;31mawait node.run(GraphRunContext(state=ctx.state, deps=ctx.deps))[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1061[0m, in [35mrun[0m
+  |     async with [31mself.stream[0m[1;31m(ctx)[0m:
+  |                [31m~~~~~~~~~~~[0m[1;31m^^^^^[0m
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m221[0m, in [35m__aexit__[0m
+  |     await anext(self.gen)
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1081[0m, in [35mstream[0m
+  |     async for _event in stream:
+  |         pass
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1245[0m, in [35m_run_stream[0m
+  |     async for event in self._events_iterator:
+  |         yield event
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1208[0m, in [35m_run_stream[0m
+  |     async for event in self._handle_tool_calls(ctx, tool_calls):
+  |         yield event
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1269[0m, in [35m_handle_tool_calls[0m
+  |     async for event in process_tool_calls(
+  |     ...<9 lines>...
+  |         yield event
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1692[0m, in [35mprocess_tool_calls[0m
+  |     async for event in _call_tools(
+  |     ...<8 lines>...
+  |         yield event
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1900[0m, in [35m_call_tools[0m
+  |     if event := [1;31mawait handle_call_or_result(coro_or_task=task, index=index)[0m:  # pyright: ignore[reportArgumentType]
+  |                 [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1843[0m, in [35mhandle_call_or_result[0m
+  |     ([1;31mawait coro_or_task[0m) if inspect.isawaitable(coro_or_task) else coro_or_task.result()
+  |      [1;31m^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_agent_graph.py"[0m, line [35m1956[0m, in [35m_call_tool[0m
+  |     tool_result = [1;31mawait tool_manager.execute_tool_call(validated)[0m
+  |                   [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m499[0m, in [35mexecute_tool_call[0m
+  |     return [1;31mawait self._execute_tool_call_impl([0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |         [1;31mvalidated, usage=self.ctx.usage, wrap_validation_errors=wrap_validation_errors[0m
+  |         [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m731[0m, in [35m_execute_tool_call_impl[0m
+  |     tool_result = [1;31mawait self._run_execute_hooks([0m
+  |                   [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |         [1;31mvalidated, usage=usage, wrap_validation_errors=wrap_validation_errors[0m
+  |         [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m335[0m, in [35m_run_execute_hooks[0m
+  |     tool_result = [1;31mawait cap.on_tool_execute_error(ctx, call=call, tool_def=tool_def, args=args, error=e)[0m
+  |                   [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m436[0m, in [35mon_tool_execute_error[0m
+  |     raise error
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m433[0m, in [35mon_tool_execute_error[0m
+  |     return [1;31mawait capability.on_tool_execute_error(ctx, call=call, tool_def=tool_def, args=args, error=error)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m700[0m, in [35mon_tool_execute_error[0m
+  |     raise error
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m433[0m, in [35mon_tool_execute_error[0m
+  |     return [1;31mawait capability.on_tool_execute_error(ctx, call=call, tool_def=tool_def, args=args, error=error)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m700[0m, in [35mon_tool_execute_error[0m
+  |     raise error
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m327[0m, in [35m_run_execute_hooks[0m
+  |     tool_result = [1;31mawait cap.wrap_tool_execute([0m
+  |                   [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |         [1;31mctx, call=call, tool_def=tool_def, args=args, handler=do_execute[0m
+  |         [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m420[0m, in [35mwrap_tool_execute[0m
+  |     return [1;31mawait chain(args)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m641[0m, in [35mwrapped[0m
+  |     return [1;31mawait cap.wrap_tool_execute(ctx, call=call, tool_def=tool_def, args=args, handler=inner)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m670[0m, in [35mwrap_tool_execute[0m
+  |     return [1;31mawait handler(args)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\combined.py"[0m, line [35m641[0m, in [35mwrapped[0m
+  |     return [1;31mawait cap.wrap_tool_execute(ctx, call=call, tool_def=tool_def, args=args, handler=inner)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\capabilities\abstract.py"[0m, line [35m670[0m, in [35mwrap_tool_execute[0m
+  |     return [1;31mawait handler(args)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m312[0m, in [35mdo_execute[0m
+  |     return [1;31mawait self._raw_execute([0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |         [1;31mmodified_validated, usage=usage, wrap_validation_errors=wrap_validation_errors[0m
+  |         [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\tool_manager.py"[0m, line [35m754[0m, in [35m_raw_execute[0m
+  |     tool_result = [1;31mawait self.toolset.call_tool([0m
+  |                   [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     ...<4 lines>...
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\combined.py"[0m, line [35m94[0m, in [35mcall_tool[0m
+  |     return [1;31mawait tool.source_toolset.call_tool(name, tool_args, ctx, tool.source_tool)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\_tool_search.py"[0m, line [35m377[0m, in [35mcall_tool[0m
+  |     return [1;31mawait self.wrapped.call_tool(name, tool_args, ctx, tool)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\wrapper.py"[0m, line [35m66[0m, in [35mcall_tool[0m
+  |     return [1;31mawait self.wrapped.call_tool(name, tool_args, ctx, tool)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\combined.py"[0m, line [35m94[0m, in [35mcall_tool[0m
+  |     return [1;31mawait tool.source_toolset.call_tool(name, tool_args, ctx, tool.source_tool)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\function.py"[0m, line [35m663[0m, in [35mcall_tool[0m
+  |     return [1;31mawait tool.call_func(tool_args, ctx)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\_function_schema.py"[0m, line [35m84[0m, in [35mcall[0m
+  |     return [1;31mawait function(*args, **kwargs)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\agents\supervisor.py"[0m, line [35m119[0m, in [35mdelegate_to_specialists[0m
+  |     res = [1;31mawait specialist.run(sub_task, deps=ctx.deps)[0m
+  |           [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\agents\specialist.py"[0m, line [35m86[0m, in [35mrun[0m
+  |     result = [1;31mawait self._agent.run([0m
+  |              [1;31m^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     ...<3 lines>...
+  |     [1;31m)[0m
+  |     [1;31m^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\abstract.py"[0m, line [35m384[0m, in [35mrun[0m
+  |     async with [31mself.iter[0m[1;31m([0m
+  |                [31m~~~~~~~~~[0m[1;31m^[0m
+  |         [1;31muser_prompt=user_prompt,[0m
+  |         [1;31m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |     ...<14 lines>...
+  |         [1;31mspec=spec,[0m
+  |         [1;31m^^^^^^^^^^[0m
+  |     [1;31m)[0m as agent_run:
+  |     [1;31m^[0m
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m214[0m, in [35m__aenter__[0m
+  |     return [1;31mawait anext(self.gen)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\agent\__init__.py"[0m, line [35m1587[0m, in [35miter[0m
+  |     await stack.enter_async_context(toolset)
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m668[0m, in [35menter_async_context[0m
+  |     result = [1;31mawait _enter(cm)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\combined.py"[0m, line [35m57[0m, in [35m__aenter__[0m
+  |     await exit_stack.enter_async_context(toolset)
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m668[0m, in [35menter_async_context[0m
+  |     result = [1;31mawait _enter(cm)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\wrapper.py"[0m, line [35m44[0m, in [35m__aenter__[0m
+  |     await self.wrapped.__aenter__()
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\wrapper.py"[0m, line [35m44[0m, in [35m__aenter__[0m
+  |     await self.wrapped.__aenter__()
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\toolsets\combined.py"[0m, line [35m57[0m, in [35m__aenter__[0m
+  |     await exit_stack.enter_async_context(toolset)
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m668[0m, in [35menter_async_context[0m
+  |     result = [1;31mawait _enter(cm)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\mcp.py"[0m, line [35m1309[0m, in [35m__aenter__[0m
+  |     raise err
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\mcp.py"[0m, line [35m1235[0m, in [35m_session_runner[0m
+  |     read_stream, write_stream = [1;31mawait stack.enter_async_context(self.client_streams())[0m
+  |                                 [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m668[0m, in [35menter_async_context[0m
+  |     result = [1;31mawait _enter(cm)[0m
+  |              [1;31m^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m214[0m, in [35m__aenter__[0m
+  |     return [1;31mawait anext(self.gen)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\pydantic_ai\mcp.py"[0m, line [35m1817[0m, in [35mclient_streams[0m
+  |     async with [31msse_client[0m[1;31m([0m
+  |                [31m~~~~~~~~~~[0m[1;31m^[0m
+  |         [1;31murl=self.url,[0m
+  |         [1;31m^^^^^^^^^^^^^[0m
+  |     ...<2 lines>...
+  |         [1;31mheaders=self.headers,[0m
+  |         [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+  |     [1;31m)[0m as (read_stream, write_stream, *_):
+  |     [1;31m^[0m
+  |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m214[0m, in [35m__aenter__[0m
+  |     return [1;31mawait anext(self.gen)[0m
+  |            [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\mcp\client\sse.py"[0m, line [35m62[0m, in [35msse_client[0m
+  |     async with [31manyio.create_task_group[0m[1;31m()[0m as tg:
+  |                [31m~~~~~~~~~~~~~~~~~~~~~~~[0m[1;31m^^[0m
+  |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\anyio\_backends\_asyncio.py"[0m, line [35m799[0m, in [35m__aexit__[0m
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | [1;35mExceptionGroup[0m: [35munhandled errors in a TaskGroup (1 sub-exception)[0m
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_transports\default.py"[0m, line [35m101[0m, in [35mmap_httpcore_exceptions[0m
+    |     yield
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_transports\default.py"[0m, line [35m394[0m, in [35mhandle_async_request[0m
+    |     resp = [1;31mawait self._pool.handle_async_request(req)[0m
+    |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpcore\_async\connection_pool.py"[0m, line [35m256[0m, in [35mhandle_async_request[0m
+    |     raise exc from None
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpcore\_async\connection_pool.py"[0m, line [35m236[0m, in [35mhandle_async_request[0m
+    |     response = [1;31mawait connection.handle_async_request([0m
+    |                [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |         [1;31mpool_request.request[0m
+    |         [1;31m^^^^^^^^^^^^^^^^^^^^[0m
+    |     [1;31m)[0m
+    |     [1;31m^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpcore\_async\connection.py"[0m, line [35m103[0m, in [35mhandle_async_request[0m
+    |     return [1;31mawait self._connection.handle_async_request(request)[0m
+    |            [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpcore\_async\http11.py"[0m, line [35m136[0m, in [35mhandle_async_request[0m
+    |     raise exc
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpcore\_async\http11.py"[0m, line [35m86[0m, in [35mhandle_async_request[0m
+    |     await self._send_request_headers(**kwargs)
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpcore\_async\http11.py"[0m, line [35m144[0m, in [35m_send_request_headers[0m
+    |     with [31mmap_exceptions[0m[1;31m({h11.LocalProtocolError: LocalProtocolError})[0m:
+    |          [31m~~~~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m162[0m, in [35m__exit__[0m
+    |     [31mself.gen.throw[0m[1;31m(value)[0m
+    |     [31m~~~~~~~~~~~~~~[0m[1;31m^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpcore\_exceptions.py"[0m, line [35m14[0m, in [35mmap_exceptions[0m
+    |     raise to_exc(exc) from exc
+    | [1;35mhttpcore.LocalProtocolError[0m: [35mIllegal header value b'Bearer '[0m
+    | 
+    | The above exception was the direct cause of the following exception:
+    | 
+    | Traceback (most recent call last):
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\mcp\client\sse.py"[0m, line [35m68[0m, in [35msse_client[0m
+    |     async with [31maconnect_sse[0m[1;31m([0m
+    |                [31m~~~~~~~~~~~~[0m[1;31m^[0m
+    |         [1;31mclient,[0m
+    |         [1;31m^^^^^^^[0m
+    |         [1;31m"GET",[0m
+    |         [1;31m^^^^^^[0m
+    |         [1;31murl,[0m
+    |         [1;31m^^^^[0m
+    |     [1;31m)[0m as event_source:
+    |     [1;31m^[0m
+    |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m214[0m, in [35m__aenter__[0m
+    |     return [1;31mawait anext(self.gen)[0m
+    |            [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx_sse\_api.py"[0m, line [35m74[0m, in [35maconnect_sse[0m
+    |     async with [31mclient.stream[0m[1;31m(method, url, headers=headers, **kwargs)[0m as response:
+    |                [31m~~~~~~~~~~~~~[0m[1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m214[0m, in [35m__aenter__[0m
+    |     return [1;31mawait anext(self.gen)[0m
+    |            [1;31m^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_client.py"[0m, line [35m1583[0m, in [35mstream[0m
+    |     response = [1;31mawait self.send([0m
+    |                [1;31m^^^^^^^^^^^^^^^^[0m
+    |     ...<4 lines>...
+    |     [1;31m)[0m
+    |     [1;31m^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_client.py"[0m, line [35m1629[0m, in [35msend[0m
+    |     response = [1;31mawait self._send_handling_auth([0m
+    |                [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |     ...<4 lines>...
+    |     [1;31m)[0m
+    |     [1;31m^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_client.py"[0m, line [35m1657[0m, in [35m_send_handling_auth[0m
+    |     response = [1;31mawait self._send_handling_redirects([0m
+    |                [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |     ...<3 lines>...
+    |     [1;31m)[0m
+    |     [1;31m^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_client.py"[0m, line [35m1694[0m, in [35m_send_handling_redirects[0m
+    |     response = [1;31mawait self._send_single_request(request)[0m
+    |                [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_client.py"[0m, line [35m1730[0m, in [35m_send_single_request[0m
+    |     response = [1;31mawait transport.handle_async_request(request)[0m
+    |                [1;31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_transports\default.py"[0m, line [35m393[0m, in [35mhandle_async_request[0m
+    |     with [31mmap_httpcore_exceptions[0m[1;31m()[0m:
+    |          [31m~~~~~~~~~~~~~~~~~~~~~~~[0m[1;31m^^[0m
+    |   File [35m"C:\Python313\Lib\contextlib.py"[0m, line [35m162[0m, in [35m__exit__[0m
+    |     [31mself.gen.throw[0m[1;31m(value)[0m
+    |     [31m~~~~~~~~~~~~~~[0m[1;31m^^^^^^^[0m
+    |   File [35m"C:\Development\python\pydantic-ai\multi-agent\closed-claw\venv\Lib\site-packages\httpx\_transports\default.py"[0m, line [35m118[0m, in [35mmap_httpcore_exceptions[0m
+    |     raise mapped_exc(message) from exc
+    | [1;35mhttpx.LocalProtocolError[0m: [35mIllegal header value b'Bearer '[0m
+    +------------------------------------
+2026-06-03 13:19:10,627 [INFO] app | gateway | shutdown

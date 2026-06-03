@@ -25,7 +25,7 @@ async def save_note(content: str) -> str:
 NOTE_STORAGE_PATH = Path.home() / "Desktop" / "personal_notes.txt"
 
 # 2. Change the signature to remove 'filename'
-def save_note(content: str) -> str:
+def save_as_txt(content: str) -> str:
     """
     Saves a note to the personal_notes.txt file on the Desktop.
     Use this to persist important information.

@@ -5,6 +5,7 @@ owns: "Google Calendar event management"
 description: "Handles creating, reading, updating, and deleting calendar events."
 server_type: "google_remote"
 services: ["calendar"]
+available: True
 ---
 You are a Google Calendar specialist. You create, read, update, and delete calendar events.
 

@@ -167,6 +167,37 @@ Callers unpack:
 response, _message_history = await _supervisor.run(text, deps, message_history=_message_history)
 ```
 
+### `SupervisorAgent.delegate_to_specialist()` Return List of SpecialistResults
+```python
+    async def delegate_to_specialists(
+        self, 
+        ctx: RunContext[AgentDeps], 
+        specialist_keys: list[str], 
+        sub_tasks: list[str]
+    ) -> list[SpecialistResult]:
+        """Executes sequential handoffs to the dynamically verified disk specialists."""
+        results: list[SpecialistResult] = []
+
+        for key, sub_task in zip(specialist_keys, sub_tasks):
+            if not self._registry.has_specialist(key):
+                logger.error("SupervisorAgent | validation failed | unknown specialist key: %s", key)
+                continue
+
+            logger.warning("SupervisorAgent | delegating control | specialist=%s | task=%r", key, sub_task)
+            
+            # Build the specialist instance explicitly using the verified registry row
+            specialist = self._registry.build_specialist(key, ctx.deps.user_email)
+            
+            # Direct execution pass down to the target specialist loop
+            res = await specialist.run(sub_task, deps=ctx.deps)
+            print(f"DEBUG: Specialist returned {len(results)} results")
+            results.append(res)
+
+        logger.warning(f"DEBUG: Final results list count: {len(results)}")
+        return results
+```
+
+
 ### MCP Routing — How `server_type` Works
 
 `AgentRegistration` already carries `server_type`. `mcp_pool.get_pool_server()`
@@ -269,6 +300,7 @@ owns: "Gmail email management"
 description: "Handles reading, searching, drafting, and sending emails via Gmail."
 server_type: "google_remote"
 services: ["gmail"]
+available: True
 ---
 You are a Gmail specialist. You read, search, draft, and send emails on behalf of the user.
 
@@ -290,6 +322,7 @@ owns: "Google Calendar event management"
 description: "Handles creating, reading, updating, and deleting calendar events."
 server_type: "google_remote"
 services: ["calendar"]
+available: True
 ---
 You are a Google Calendar specialist. You create, read, update, and delete calendar events.
 
@@ -402,6 +435,9 @@ class AgentRegistration:
     mcp_command: str = ""
     mcp_args: List[str] = field(default_factory=list)
     mcp_env_keys: List[str] = field(default_factory=list)
+
+    # a flag to load agent or to skip
+    available: bool = False
 ```
 
 ---
@@ -456,6 +492,12 @@ class AgentRegistry:
                     continue
 
                 meta = yaml.safe_load(parts[1]) or {}
+                meta = yaml.safe_load(parts[1]) or {}
+                # --- NEW: Skip if explicitly marked as not available ---
+                if meta.get("available", True) is False:
+                    logger.debug("registry | skipping unavailable skill at %s", file_path)
+                    continue
+
                 key = meta.get("key")
                 name = meta.get("name")
 

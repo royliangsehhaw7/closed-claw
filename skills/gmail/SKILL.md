@@ -5,6 +5,7 @@ owns: "Gmail email management"
 description: "Handles reading, searching, drafting, and sending emails via Gmail."
 server_type: "google_remote"
 services: ["gmail"]
+available: False
 ---
 You are a Gmail specialist. You read, search, draft, and send emails on behalf of the user.
 

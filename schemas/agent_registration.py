@@ -20,3 +20,6 @@ class AgentRegistration:
     mcp_command: str = ""
     mcp_args: List[str] = field(default_factory=list)
     mcp_env_keys: List[str] = field(default_factory=list)
+
+    # a flag to load agent or to skip
+    available: bool = False

@@ -7,6 +7,7 @@ server_type: "none"
 services: []
 agent_class: "PersonalNoteAgent"
 module_path: "agents.personal_notes"
+available: True
 ---
 You are a personal notes specialist. You save freeform notes, memos, and text to local files.
 
